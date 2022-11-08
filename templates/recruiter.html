@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+
+</body><!DOCTYPE html>
+<html >
+<!--From https://codepen.io/frytyler/pen/EGdtg-->
+<head>
+  <meta charset="UTF-8">
+  <title>ML API</title>
+  <link href='https://fonts.googleapis.com/css?family=Pacifico' rel='stylesheet' type='text/css'>
+<link href='https://fonts.googleapis.com/css?family=Arimo' rel='stylesheet' type='text/css'>
+<link href='https://fonts.googleapis.com/css?family=Hind:300' rel='stylesheet' type='text/css'>
+<link href='https://fonts.googleapis.com/css?family=Open+Sans+Condensed:300' rel='stylesheet' type='text/css'>
+<link rel="stylesheet" href="../../static/style.css">
+
+</head>
+
+<body>
+ <div class="login">
+ <div>
+
+	</div>
+
+     <!-- Main Input For Receiving Query to our ML -->
+    <form action="{{ url_for('recruiter')}}" method="post" enctype="multipart/form-data">
+        <input type="text" name="job role" placeholder="job role" required="required" />
+
+    	<input type="text" name="YearsExperience" placeholder="Min Years Experience" required="required" />
+
+        <button type="submit" class="btn btn-primary btn-block btn-large">Find</button>
+    </form>
+
+   <br>
+   <br>
+
+     <div id="display">
+        {{ Output }}
+    </div>
+
+ </div>
+
+</body>
+</html>
+</html>

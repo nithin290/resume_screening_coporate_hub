@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html >
+<!--From https://codepen.io/frytyler/pen/EGdtg-->
+<head>
+  <meta charset="UTF-8">
+  <title>ML API</title>
+  <link href='https://fonts.googleapis.com/css?family=Pacifico' rel='stylesheet' type='text/css'>
+<link href='https://fonts.googleapis.com/css?family=Arimo' rel='stylesheet' type='text/css'>
+<link href='https://fonts.googleapis.com/css?family=Hind:300' rel='stylesheet' type='text/css'>
+<link href='https://fonts.googleapis.com/css?family=Open+Sans+Condensed:300' rel='stylesheet' type='text/css'>
+<link rel="stylesheet" href="../../static/style.css">
+
+</head>
+
+<body>
+ <div class="login">
+ <div>
+
+	</div>
+
+     <!-- Main Input For Receiving Query to our ML -->
+    <form action="{{ url_for('render_applicant')}}" method="post" enctype="multipart/form-data">
+        <button class="btn btn-primary btn-block btn-large" name="applicant">Applicant</button>
+    </form>
+     <br>
+     <form action="{{ url_for('render_recruiter')}}" method="post" enctype="multipart/form-data">
+        <button class="btn btn-primary btn-block btn-large" name="recruiter">Recruiter</button>
+    </form>
+
+</div>
+
+ </div>
+
+</body>
+</html>
