@@ -12,6 +12,9 @@ import PyPDF2
 from csv import DictWriter
 from nltk.tokenize import word_tokenize
 from nltk.corpus import stopwords
+import sklearn
+
+from scrapper import scrapper
 
 le_name_mapping = {0: 'Advocate', 1: 'Arts', 2: 'Automation Testing', 3: 'Blockchain', 4: 'Business Analyst',
                        5: 'Civil Engineer', 6: 'Data Science', 7: 'Database', 8: 'DevOps Engineer',
@@ -182,12 +185,9 @@ def predict():
         job_role2_link = load_indeed_jobs_div(le_name_mapping[int(job_role2)], 'India')
         job_role3_link = load_indeed_jobs_div(le_name_mapping[int(job_role3)], 'India')
 
-    return render_template('index.html', job_role1=f'job role1: {le_name_mapping[int(job_role1)]}',
-                           job_role1_link=job_role1_link,
-                           job_role2=f'job role2: {le_name_mapping[int(job_role2)]}',
-                           job_role2_link=job_role2_link,
-                           job_role3=f'job role3: {le_name_mapping[int(job_role3)]}',
-                           job_role3_link=job_role3_link)
+        links = [job_role1_link, job_role2_link, job_role3_link]
+
+    return render_template('index.html', links=links)
 
 
 if __name__ == '__main__':
