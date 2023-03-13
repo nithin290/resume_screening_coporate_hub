@@ -44,6 +44,7 @@ def cleanResume(resumeText):
     return resumeText
 
 
+# TODO remove this since a better scrapper has been implemented
 def load_indeed_jobs_div(job_title, location):
     getVars = {'q': job_title, 'l': location, 'fromage': 'last', 'sort': 'date'}
     url = ('https://in.indeed.com/jobs?' + urllib.parse.urlencode(getVars))
@@ -181,13 +182,19 @@ def predict():
         # Close the file object
         f_object.close()
 
-        job_role1_link = load_indeed_jobs_div(le_name_mapping[int(job_role1)], 'India')
-        job_role2_link = load_indeed_jobs_div(le_name_mapping[int(job_role2)], 'India')
-        job_role3_link = load_indeed_jobs_div(le_name_mapping[int(job_role3)], 'India')
+        # TODO remove this since a better scrapper has been implemented
+        # job_role1_link = load_indeed_jobs_div(le_name_mapping[int(job_role1)], 'India')
+        # job_role2_link = load_indeed_jobs_div(le_name_mapping[int(job_role2)], 'India')
+        # job_role3_link = load_indeed_jobs_div(le_name_mapping[int(job_role3)], 'India')
 
-        links = [job_role1_link, job_role2_link, job_role3_link]
+        # links = [job_role1_link, job_role2_link, job_role3_link]
 
-    return render_template('index.html', links=links)
+        links = scrapper(le_name_mapping[int(job_role1)], 'India')
+
+    return render_template('index2.html', job_role=le_name_mapping[int(job_role1)], job_role1_link=links[0], job_role2_link=links[1], job_role3_link=links[2],
+                           job_role4_link=links[3], job_role5_link=links[4], job_role6_link=links[5],
+                           job_role7_link=links[6], job_role8link=links[7], job_role9_link=links[8],
+                           job_role10_link=links[9])
 
 
 if __name__ == '__main__':

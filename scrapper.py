@@ -4,7 +4,6 @@ from bs4 import BeautifulSoup
 
 
 def scrapper(skill='Python Developer', location='India'):
-
     url = "https://in.indeed.com/jobs?q=" + skill + "&l=" + location + "&from=searchOnHP&vjk=fc431d75e835b2f0"
     base = "https://in.indeed.com"
 
@@ -36,8 +35,7 @@ def scrapper(skill='Python Developer', location='India'):
         else:
             links.append(base + link['href'])
 
-        print(f'{i}. {links}')
-
+        print(f'link {i+1}. {links[i]}')
 
     return links
 
