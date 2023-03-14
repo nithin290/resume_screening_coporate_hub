@@ -191,10 +191,10 @@ def predict():
 
         links = scrapper(le_name_mapping[int(job_role1)], 'India')
 
-    return render_template('index2.html', job_role=le_name_mapping[int(job_role1)], job_role1_link=links[0], job_role2_link=links[1], job_role3_link=links[2],
-                           job_role4_link=links[3], job_role5_link=links[4], job_role6_link=links[5],
-                           job_role7_link=links[6], job_role8link=links[7], job_role9_link=links[8],
-                           job_role10_link=links[9])
+    return render_template('index2.html', job_role=le_name_mapping[int(job_role1)], job_role1_link=links[0],
+                           job_role2_link=links[1], job_role3_link=links[2], job_role4_link=links[3],
+                           job_role5_link=links[4], job_role6_link=links[5], job_role7_link=links[6],
+                           job_role8_link=links[7], job_role9_link=links[8], job_role10_link=links[9])
 
 
 if __name__ == '__main__':
