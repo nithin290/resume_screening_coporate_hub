@@ -7,7 +7,7 @@ from flask import Flask, request, jsonify, render_template
 import pickle
 from werkzeug.utils import secure_filename
 import re
-
+import csv
 import PyPDF2
 from csv import DictWriter
 from nltk.tokenize import word_tokenize
@@ -189,7 +189,8 @@ def predict():
 
         # links = [job_role1_link, job_role2_link, job_role3_link]
 
-        links = scrapper(le_name_mapping[int(job_role1)], 'India')
+
+
 
     return render_template('index2.html', job_role=le_name_mapping[int(job_role1)], job_role1_link=links[0],
                            job_role2_link=links[1], job_role3_link=links[2], job_role4_link=links[3],
