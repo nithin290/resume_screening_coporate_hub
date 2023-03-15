@@ -9,7 +9,7 @@ def scrapper(skill='Python Developer', location='India'):
 
     options = Options()
     options.binary_location = r"C:\Program Files\Google\Chrome\Application\chrome.exe"
-    driver = webdriver.Chrome(executable_path="./resume_screening_coporate_hub/chromedriver.exe", options=options)
+    driver = webdriver.Chrome(executable_path="D:/Selenium/chromedriver.exe", options=options)
     driver.get(url)
 
     soup = BeautifulSoup(driver.page_source, 'html.parser')
