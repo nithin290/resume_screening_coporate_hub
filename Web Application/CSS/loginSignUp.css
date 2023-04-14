@@ -1,0 +1,157 @@
+/* body {
+    margin: 0;
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    background-size: cover;
+    background-image: url(../Images/register.jpg);
+    
+} */
+
+body {
+    background-image: url('../Images/applicantbg.jpg');
+}
+
+
+.container {
+    width: 200px;
+    max-width: 200px;
+    margin: 1rem;
+    padding: 2rem;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    box-shadow: 0 0 40px rgba(0, 0, 0, 0.2);
+    border-radius: 4px;
+    background-color: white;
+}
+
+
+.container, .form_input,.form_button {
+    font: 500 1rem 'Quicksand', sans-serif;
+}
+
+.form_hidden {
+    display: none;
+}
+
+.form > *:first-child {
+    margin-top: 0;
+}
+
+.form > *:last-child {
+    margin-bottom: 0;
+}
+
+.form_title {
+    margin-bottom: 2rem;
+    text-align: center;
+}
+
+.form_message {
+    text-align: center;
+    margin-bottom: 1rem;
+}
+
+.form_message_success {
+    color: #4bb544;
+}
+
+.form_message_error {
+    color: #cc3333;
+}
+
+.form_input_group {
+    margin-bottom: 1rem;
+}
+
+.form_input {
+    display: block;
+    width: 100%;
+    padding: 0.75rem;
+    box-sizing: border-box;
+    border-radius: 4px;
+    border: 1px solid #dddddd;
+    outline: none;
+    background: #eeeeee;
+    transition: background 0.2s, border-color 0.2s;
+}
+
+.form_input:focus {
+    border-color: #009579;
+    background: #ffffff;
+}
+
+.form_input_error {
+    color: #cc3333;
+    border-color: #cc3333;
+}
+
+.form_input_error_message {
+    margin-top: 0.5rem;
+    font-size: 0.85rem;
+    color: #cc3333;
+}
+
+.form_button {
+    width: 100%;
+    padding: 1rem 2rem;
+    font-weight: bold;
+    font-size: 1.1rem;
+    color: #ffffff;
+    border: none;
+    border-radius:  4px;
+    outline: none;
+    cursor: pointer;
+    background: #009579;
+}
+
+.form_button:hover {
+    background: #007f67;
+}
+
+.form_button:active {
+    transform: scale(0.98);
+}
+
+.form_text {
+    text-align: center;
+}
+
+.form_link {
+    color: #252c6a;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.form_link:hover {
+    text-decoration: underline;
+}
+
+.close{
+    font-size: 30px;
+	cursor: pointer;
+    float: right;
+}
+
+.error{
+    color: red;
+    font-size: .8rem;
+}
+
+@media screen and (max-width: 1250px) {
+    .container{
+      width: 100%; /* The width is 100%, when the viewport is 800px or smaller */
+      margin : 0%;
+    }
+   
+  }
+
+@media screen and (max-width: 660px){
+    .container {
+        margin: 0%;
+        width: 50%;
+    }
+}
