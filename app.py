@@ -3,25 +3,19 @@ import urllib
 
 import numpy as np
 import pandas as pd
-from flask import Flask, request, jsonify, render_template
+from flask import Flask, request, render_template
 import pickle
 from werkzeug.utils import secure_filename
 import re
-import csv
 import PyPDF2
 from csv import DictWriter
-from nltk.tokenize import word_tokenize
-from nltk.corpus import stopwords
-import sklearn
-
-from scrapper import scrapper
 
 le_name_mapping = {0: 'Advocate', 1: 'Arts', 2: 'Automation Testing', 3: 'Blockchain', 4: 'Business Analyst',
-                       5: 'Civil Engineer', 6: 'Data Science', 7: 'Database', 8: 'DevOps Engineer',
-                       9: 'DotNet Developer', 10: 'ETL Developer', 11: 'Electrical Engineering', 12: 'HR', 13: 'Hadoop',
-                       14: 'Health and fitness', 15: 'Java Developer', 16: 'Mechanical Engineer',
-                       17: 'Network Security Engineer', 18: 'Operations Manager', 19: 'PMO', 20: 'Python Developer',
-                       21: 'SAP Developer', 22: 'Sales', 23: 'Testing', 24: 'Web Designing'}
+                   5: 'Civil Engineer', 6: 'Data Science', 7: 'Database', 8: 'DevOps Engineer',
+                   9: 'DotNet Developer', 10: 'ETL Developer', 11: 'Electrical Engineering', 12: 'HR', 13: 'Hadoop',
+                   14: 'Health and fitness', 15: 'Java Developer', 16: 'Mechanical Engineer',
+                   17: 'Network Security Engineer', 18: 'Operations Manager', 19: 'PMO', 20: 'Python Developer',
+                   21: 'SAP Developer', 22: 'Sales', 23: 'Testing', 24: 'Web Designing'}
 
 
 def read_pdf(path):
@@ -54,10 +48,10 @@ def load_indeed_jobs_div(job_title, location):
 app = Flask(__name__)
 app.config['UPLOAD_FOLDER'] = 'uploads'
 
-word_vectorizer = pickle.load(open('vectorizer.pkl', 'rb'))
-clf_nb = pickle.load(open('mnb.pkl', 'rb'))
-clf_knn = pickle.load(open('knn.pkl', 'rb'))
-clf_svc = pickle.load(open('svc.pkl', 'rb'))
+word_vectorizer = pickle.load(open('models/vectorizer.pkl', 'rb'))
+clf_nb = pickle.load(open('models/mnb.pkl', 'rb'))
+clf_knn = pickle.load(open('models/knn.pkl', 'rb'))
+clf_svc = pickle.load(open('models/svc.pkl', 'rb'))
 
 
 @app.route('/')
@@ -72,13 +66,13 @@ def render_recruiter():
 
 @app.route('/recruiter', methods=['POST'])
 def recruiter():
-    nr = pd.read_csv('newResumes.csv', encoding='utf-8')
+    nr = pd.read_csv('assets/newResumes.csv', encoding='utf-8')
 
     job_avail = request.form['job role'].lower()
     experience = int(request.form['YearsExperience'])
     result = ''
 
-    resumeDataSet = pd.read_csv('file.csv', encoding='utf-8')
+    resumeDataSet = pd.read_csv('assets/file.csv', encoding='utf-8')
 
     for person in range(len(nr['Name'])):
         if nr['Job-Role1'][person].lower() == job_avail and nr['Experience'][person] >= experience:
@@ -152,7 +146,7 @@ def predict():
     probabilities_nb[0][int(job_role2)] = -1
     job_role3 = f'{np.argmax(probabilities_nb)}'
 
-    nr = pd.read_csv('newResumes.csv', encoding='utf-8')
+    nr = pd.read_csv('assets/newResumes.csv', encoding='utf-8')
     # list of column names
     field_names = ['Name', 'Resume', 'Experience', 'Job-role1', 'Job-role2',
                    'Job-role3']
@@ -163,7 +157,7 @@ def predict():
 
     # Open CSV file in append mode
     # Create a file object for this file
-    with open('newResumes.csv', 'a') as f_object:
+    with open('assets/newResumes.csv', 'a') as f_object:
 
         # Pass the file object and a list
         # of column names to DictWriter()
@@ -188,9 +182,6 @@ def predict():
         # job_role3_link = load_indeed_jobs_div(le_name_mapping[int(job_role3)], 'India')
 
         # links = [job_role1_link, job_role2_link, job_role3_link]
-
-
-
 
     return render_template('index2.html', job_role=le_name_mapping[int(job_role1)], job_role1_link=links[0],
                            job_role2_link=links[1], job_role3_link=links[2], job_role4_link=links[3],

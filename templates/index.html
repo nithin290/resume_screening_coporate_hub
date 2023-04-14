@@ -19,7 +19,7 @@
 	</div>
 
      <!-- Main Input For Receiving Query to our ML -->
-    <form action="{{ url_for('predict')}}"method="post" enctype="multipart/form-data" onsubmit="show">
+    <form action="{{ url_for('predict')}}" method="post" enctype="multipart/form-data" onsubmit="show">
         <input type="text" name="Name" placeholder="Name" required="required" />
 
     	<input type="text" name="YearsExperience" placeholder="Years Experience" required="required" />
@@ -27,6 +27,7 @@
         <input type="file" name="upload" accept="application/pdf" />
 
         <button type="submit" class="btn btn-primary btn-block btn-large">Predict</button>
+
     </form>
 
    <br>

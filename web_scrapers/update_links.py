@@ -1,5 +1,5 @@
 import csv
-from scrapper import scrapper
+from web_scrapers.scrapper import scrapper
 
 
 def main():
@@ -9,15 +9,18 @@ def main():
                        14: 'Health and fitness', 15: 'Java Developer', 16: 'Mechanical Engineer',
                        17: 'Network Security Engineer', 18: 'Operations Manager', 19: 'PMO', 20: 'Python Developer',
                        21: 'SAP Developer', 22: 'Sales', 23: 'Testing', 24: 'Web Designing'}
+
+    l_object = open('../assets/links.csv', 'w')
+    l_writer = csv.writer(l_object)
     for i in range(len(le_name_mapping)):
         links = scrapper(le_name_mapping[i], 'India')
-        with open('links.csv', 'w') as l_object:
-            l_writer = csv.writer(l_object)
-            for j in range(len(links)):
-                row = [le_name_mapping[i], links[j]]
-                l_writer.writerow(row)
-        l_object.close()
-    print('Hello World')
+        links_ = []
+        for j in range(len(links)):
+            # row = [le_name_mapping[i], links[j]]
+            links_.append([le_name_mapping[i], links[j]])
+            # l_writer.writerow(row)
+        l_writer.writerows(links_)
+    l_object.close()
 
 
 if __name__ == '__main__':
