@@ -17,6 +17,13 @@ le_name_mapping = {0: 'Advocate', 1: 'Arts', 2: 'Automation Testing', 3: 'Blockc
                    17: 'Network Security Engineer', 18: 'Operations Manager', 19: 'PMO', 20: 'Python Developer',
                    21: 'SAP Developer', 22: 'Sales', 23: 'Testing', 24: 'Web Designing'}
 
+job_desc = ['Artificial Intelligence Expert', 'Big Data Engineer', 'Business Analyst', 'Business Intelligence Analyst',
+            'Cloud Architect', 'Cloud Services Developer', 'Data Analyst', 'Data Architect', 'Data Engineer',
+            'Data Quality Manager', 'Data Scientist', 'Data Visualization Expert', 'Data Warehousing Analyst',
+            'Data and Analytics Manager', 'Database Administrator', 'Deep Learning Expert', 'Full Stack Developer',
+            'IT Consultant', 'IT Systems Administrator', 'Information Security Analyst', 'Machine Learning Engineer',
+            'Network Architect', 'Statistician', 'Technical Operations Engineer', 'Technology Integration Analyst']
+
 
 def read_pdf(path):
     reader = PyPDF2.PdfReader(path, 'rb')
@@ -54,6 +61,9 @@ clf_knn = pickle.load(open('models/knn.pkl', 'rb'))
 clf_svc = pickle.load(open('models/svc.pkl', 'rb'))
 clf_exp = pickle.load(open('models/svc2.pkl', 'rb'))
 exp_vec = pickle.load(open('models/vectorizer2.pkl', 'rb'))
+clf_jd = pickle.load(open('models/svc3.pkl', 'rb'))
+jd_vec = pickle.load(open('models/vectorizer3.pkl', 'rb'))
+
 @app.route('/')
 def home():
     return render_template('home.html')
@@ -71,7 +81,9 @@ def recruiter():
     job_avail = request.form['job role'].lower()
     experience = int(request.form['YearsExperience'])
     result = ''
-
+    jd = request.form['job description'].lower()
+    jd = cleanResume(jd)
+    predicted_job_role = job_desc[clf_jd.predict(jd)[0]]
     resumeDataSet = pd.read_csv('assets/Resume_With_Experience.csv', encoding='utf-8')
     req_exp = ''
     if experience < 5:
@@ -93,7 +105,6 @@ def recruiter():
         # print(le_name_mapping[int(resumeDataSet['Category'][person])])
         if resumeDataSet['Category'][person].lower() == job_avail and \
                 resumeDataSet['EXP'][person] == req_exp:
-
             result += f'resume index : {person + 2}' + '\n\n'
 
     return render_template('recruiter.html', Output=result)

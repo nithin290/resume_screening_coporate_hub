@@ -28,6 +28,13 @@ le_name_mapping = {0: 'Advocate', 1: 'Arts', 2: 'Automation Testing', 3: 'Blockc
                    17: 'Network Security Engineer', 18: 'Operations Manager', 19: 'PMO', 20: 'Python Developer',
                    21: 'SAP Developer', 22: 'Sales', 23: 'Testing', 24: 'Web Designing'}
 
+job_desc = ['Artificial Intelligence Expert', 'Big Data Engineer', 'Business Analyst', 'Business Intelligence Analyst',
+            'Cloud Architect', 'Cloud Services Developer', 'Data Analyst', 'Data Architect', 'Data Engineer',
+            'Data Quality Manager', 'Data Scientist', 'Data Visualization Expert', 'Data Warehousing Analyst',
+            'Data and Analytics Manager', 'Database Administrator', 'Deep Learning Expert', 'Full Stack Developer',
+            'IT Consultant', 'IT Systems Administrator', 'Information Security Analyst', 'Machine Learning Engineer',
+            'Network Architect', 'Statistician', 'Technical Operations Engineer', 'Technology Integration Analyst']
+
 # pickle files of models, vectorizers, and label_encoders
 word_vectorizer = pickle.load(open('models/vectorizer.pkl', 'rb'))
 clf_svc = pickle.load(open('models/svc.pkl', 'rb'))
