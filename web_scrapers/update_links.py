@@ -1,5 +1,5 @@
 import csv
-from web_scrapers.scrapper import scrapper
+from scrapper import scrapper
 
 
 def main():

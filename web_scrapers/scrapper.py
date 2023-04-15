@@ -18,6 +18,8 @@ def scrapper(skill='Python Developer', location='India'):
     links = []
 
     for i, job in enumerate(results):
+        if len(links) == 7:
+            break
         link = job.find("a")
 
         # print(link)
