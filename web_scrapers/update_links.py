@@ -12,6 +12,7 @@ def main():
 
     l_object = open('../assets/links.csv', 'w')
     l_writer = csv.writer(l_object)
+    l_writer.writerow(['Category', 'Link'])
     for i in range(len(le_name_mapping)):
         links = scrapper(le_name_mapping[i], 'India')
         links_ = []
