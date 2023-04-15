@@ -20,10 +20,9 @@
         <form action="#" method="post" enctype="multipart/form-data" onsubmit="show">
             <h1 class="main_heading">Take one step ahead in your career with CareerCurve</h1>
             <h1 class="main_heading">Upload Your Resume Now</h1>
-            <p>Enter Your Name :  <input type="text" name="name" placeholder="Enter Your Name" required> </p>
             <div class="main_heading mt-5 m-3">
                 <label for="uploadresume">Select & Upload Your Resume : </label>
-                <input type="file" id="uploadresume" name="resume" accept="application/pdf"/>
+                <input type="file" id="uploadresume" name="uploadresume" accept="application/pdf"/>
             </div>
             <input type="submit" value="Predict Eligible Roles and Company">
         </form>
@@ -32,7 +31,29 @@
 
     <div>
         <h1>Snippet to show the results</h1>
+        <table>
+          <tr>
+            <!-- name,pref1,pref2,pref3,workexp,resume,model_category -->
+           <th> name </th>
+           <th> pref1 </th>
+           <th> pref2 </th>
+           <th> pref3 </th>
+           <th> workexp </th>
+          </tr>
+             {%for row in output%}
+           <tr>
+            {%for i,col in row%}
 
+            {%if i <=4 %}
+             <td> {{col}} </td>
+
+             {%endif%}
+             {%endfor%}
+           </tr>
+
+           {%endfor%}
+
+         </table>
 
     </div>
 
