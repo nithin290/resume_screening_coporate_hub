@@ -75,13 +75,13 @@ def recruiter():
     resumeDataSet = pd.read_csv('assets/file.csv', encoding='utf-8')
 
     for person in range(len(nr['Name'])):
-        if nr['Job-Role1'][person].lower() == job_avail and nr['Experience'][person] >= experience:
+        if nr['Job-Role1'][person].lower() == job_avail and int(nr['Experience'][person]) >= experience:
             result += nr['Name'][person] + '\n\n'
     for person in range(len(nr['Name'])):
-        if nr['Job-Role2'][person].lower() == job_avail and nr['Experience'][person] >= experience:
+        if nr['Job-Role2'][person].lower() == job_avail and int(nr['Experience'][person]) >= experience:
             result += nr['Name'][person] + '\n\n'
     for person in range(len(nr['Name'])):
-        if nr['Job-Role3'][person].lower() == job_avail and nr['Experience'][person] >= experience:
+        if nr['Job-Role3'][person].lower() == job_avail and int(nr['Experience'][person]) >= experience:
             result += nr['Name'][person] + '\n\n'
     for person in range(len(resumeDataSet['Category'])):
         # print(le_name_mapping[int(resumeDataSet['Category'][person])])
