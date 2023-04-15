@@ -52,8 +52,8 @@ word_vectorizer = pickle.load(open('models/vectorizer.pkl', 'rb'))
 clf_nb = pickle.load(open('models/mnb.pkl', 'rb'))
 clf_knn = pickle.load(open('models/knn.pkl', 'rb'))
 clf_svc = pickle.load(open('models/svc.pkl', 'rb'))
-
-
+clf_exp = pickle.load(open('models/svc2.pkl', 'rb'))
+exp_vec = pickle.load(open('models/vectorizer2.pkl', 'rb'))
 @app.route('/')
 def home():
     return render_template('home.html')
@@ -116,9 +116,14 @@ def predict():
     file.save(file_path)
 
     cleaned_text = [cleanResume(read_pdf(file_path))]
-    name = request.form['Name']
-    exp = request.form['YearsExperience']
 
+    exp_dic = {0: 'Early career (2-5 yr)', 1: 'Mid-level (5-10 yr)', 2: 'Senior (+10 yr, not executive)'}
+    name = request.form['Name']
+    # exp = request.form['YearsExperience']
+
+    WordFeatures2 = exp_vec.transform(cleaned_text)
+    # print(clf_exp.predict(WordFeatures2))
+    exp = exp_dic[clf_exp.predict(WordFeatures2)[0]]
     # finding the job category
     WordFeatures = word_vectorizer.transform(cleaned_text)
     prediction_svc = clf_svc.predict(WordFeatures)
