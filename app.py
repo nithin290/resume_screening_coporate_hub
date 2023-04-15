@@ -72,8 +72,14 @@ def recruiter():
     experience = int(request.form['YearsExperience'])
     result = ''
 
-    resumeDataSet = pd.read_csv('assets/file.csv', encoding='utf-8')
-
+    resumeDataSet = pd.read_csv('assets/Resume_With_Experience.csv', encoding='utf-8')
+    req_exp = ''
+    if experience < 5:
+        req_exp = 'Early career (2-5 yr)'
+    elif experience < 10:
+        req_exp = 'Mid-level (5-10 yr)'
+    else:
+        req_exp = 'Senior (+10 yr, not executive)'
     for person in range(len(nr['Name'])):
         if nr['Job-Role1'][person].lower() == job_avail and int(nr['Experience'][person]) >= experience:
             result += nr['Name'][person] + '\n\n'
@@ -85,8 +91,9 @@ def recruiter():
             result += nr['Name'][person] + '\n\n'
     for person in range(len(resumeDataSet['Category'])):
         # print(le_name_mapping[int(resumeDataSet['Category'][person])])
-        if le_name_mapping[int(resumeDataSet['Category'][person])].lower() == job_avail and int(
-                resumeDataSet['Experience'][person]) >= experience:
+        if resumeDataSet['Category'][person].lower() == job_avail and \
+                resumeDataSet['EXP'][person] == req_exp:
+
             result += f'resume index : {person + 2}' + '\n\n'
 
     return render_template('recruiter.html', Output=result)
