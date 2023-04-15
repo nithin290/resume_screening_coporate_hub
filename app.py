@@ -79,7 +79,7 @@ def recruiter():
     nr = pd.read_csv('assets/newResumes.csv', encoding='utf-8')
 
     job_avail = request.form['job role'].lower()
-    experience = int(request.form['YearsExperience'])
+    experience = int(request.form['work exp'])
     result = ''
     jd = request.form['job description'].lower()
     jd = cleanResume(jd)
