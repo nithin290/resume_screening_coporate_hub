@@ -24,8 +24,8 @@
 
 <div class="container" id="pop-up" style="width: 750px;">
     <a class="close" href="/">&times;</a>
-    <form action="{{ url_for('register', role=role, user_id=1) }}/1" class="form" id="createAccount" method="post">
-        <h1 class="form_title">Recruiter Registeration</h1>
+    <form action="{{ url_for('register', role=role, user_id=1) }}" class="form" id="createAccount" method="post">
+        <h1 class="form_title">{{ role }} Registeration</h1>
         <div class="form_message form_message_error"></div>
         <div class="form_input_group">
             <input autofocus class="form_input" id="signupUsername" name="username" placeholder="Username" type="text">

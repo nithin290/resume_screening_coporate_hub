@@ -5,7 +5,7 @@ import warnings
 import PyPDF2
 import numpy as np
 import pandas as pd
-from flask import Flask, request, render_template
+from flask import Flask, request, render_template, redirect, url_for
 
 warnings.filterwarnings("ignore", category=DeprecationWarning)
 warnings.filterwarnings("ignore", category=UserWarning)
@@ -88,7 +88,7 @@ def login(role, user_id):
     global username
 
     if user_id == 0:
-        return render_template("login.html", login_output='', role=role, username=username)
+        return render_template("login.html", login_output="", role=role, username=username)
     else:
         password = request.form.get("password")
         user_name = request.form.get("username")
@@ -121,14 +121,12 @@ def register(role, user_id):
     global username
 
     if user_id == 0:
-        return render_template_with_username('register.html')
+        return render_template('register.html', role=role, username=username)
     elif user_id == 1:
 
         email = request.form.get("email")
         password = request.form.get("password")
         user_name = request.form.get("username")
-
-        print(email, password, user_name)
 
         usernames = None
         passwords = None
@@ -164,15 +162,15 @@ def register(role, user_id):
         return render_template('register.html', register_output=output_msg, role=role, username=username)
 
 
-@app.route("/appl_register/<string:username>", methods=['GET', 'POST'])
-def appl_register():
-    return render_template_with_username('applicantRegister.html')
-
+@app.route("/logout", methods=['GET', 'POST'])
+def logout():
+    global username
+    username = 'Unknown'
+    return redirect(url_for('home'))
 
 @app.route("/apply/<int:user_id>", methods=['GET', 'POST'])
 def apply(user_id=None):
     global username
-    print(username)
 
     links = pd.read_csv("../assets/links_new.csv")
     link_list = None

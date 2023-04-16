@@ -16,6 +16,7 @@
         <li class="nav-item">
           <a aria-current="page" class="nav-link active mx-3" href="/about_us">About Us</a>
         </li>
+        {% if username == 'Unknown' %}
         <li class="nav-item dropdown">
           <a aria-expanded="false" class="nav-link active dropdown-toggle mx-3" data-bs-toggle="dropdown" href="#"
              id="navbarDropdown" role="button">Login</a>
@@ -27,9 +28,22 @@
             <li><a class="dropdown-item" href="/login/applicant/0">As Applicant</a></li>
           </ul>
         </li>
-        <li class="nav-item">
-          <a aria-current="page" class="nav-link active mx-3">{{ username }}</a>
+        <!--          <li class="nav-item">-->
+        <!--            <a aria-current="page" class="nav-link active mx-3">{{ username }}</a>-->
+        <!--          </li>-->
+        {% else %}
+        <li class="nav-item dropdown">
+          <a aria-expanded="false" class="nav-link active dropdown-toggle mx-3" data-bs-toggle="dropdown" href="#"
+             id="navbarDropdown" role="button">{{ username }}</a>
+          <ul aria-labelledby="navbarDropdown" class="dropdown-menu">
+            <li><a class="dropdown-item" href="/logout">logout</a></li>
+            <!--            <li>-->
+            <!--              <hr class="dropdown-divider">-->
+            <!--            </li>-->
+            <!--            <li><a class="dropdown-item" href="/login/applicant/0">As Applicant</a></li>-->
+          </ul>
         </li>
+        {% endif %}
       </ul>
     </div>
   </div>

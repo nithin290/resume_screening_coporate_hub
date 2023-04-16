@@ -40,7 +40,8 @@
             <a class="form_link" href="#">Forgot your password?</a>
         </p>
         <p class="form_text">
-            <a class="form__link" href="./" id="linkCreateAccount">Don't have an account? Create account</a>
+            <a class="form__link" href="{{ url_for('register', role=role, user_id=0) }}" id="linkCreateAccount">Don't
+                have an account? Create account</a>
         </p>
         <p> {{ login_output }} </p>
     </form>
