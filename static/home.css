@@ -1,11 +1,65 @@
-  .blue-bg {
-    background-color: #0082ca;
-    color: #fff;
-    font-size: 2rem;
-    text-align: center;
+
+  .mt-6 {
+      margin-top: 3.9rem;
+  }
+
+  .mask{
     font-style: italic;
+    background-color: rgba(0, 0, 0, 0.50);
+  }
+
+  .mission{
+    margin-top: 20px;
+    padding-left: 150px;
+    font-style: oblique;
+    color: white;
+    float: left;
+  }
+
+  .whoWeAre{
+    margin-top: 20px;
+    padding-right: 150px;
+    font-style: oblique;
+    color: white;
+    float: right;
+  }
+
+  .aboutUs{
+    margin-top: 20px;
+    color: wheat;
+    font-family: 'Times New Roman', Times, serif;
+    padding-left: 20px;
+    padding-right: 20px;
+    font-size: 20px;
+  }
+  .aboutUs h4{
+    margin-bottom: 10px;
   }
 
 
-  
-  
+  .final{
+    margin-top: 280px;
+    text-align: center;
+    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+    color: rgb(255, 205, 205);
+    font-size: 20px;
+  }
+
+  .linkbutton{
+    margin-left: 10px;
+    margin-right: 10px;
+    background-color: #4cafaa;
+    padding: 10px 20px;
+    color: white;
+    padding: 10px 20px;
+    text-decoration: none;
+    border-radius: 5px;
+    margin-bottom: 50px;
+  }
+
+  .linkbutton:hover {
+    background-color: #3E8E41;
+}
+
+
+
