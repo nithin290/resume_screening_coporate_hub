@@ -86,6 +86,34 @@ def login():
 def rec_register():
     return render_template('recruiterRegister.html')
 
+    """
+    global applicants
+    global username
+
+    email = request.form.get("email")
+    password = request.form.get("password")
+    usernames = None
+    passwords = None
+
+    if not applicants.empty:
+        usernames = applicants["username"].values.tolist()
+        passwords = applicants["password"].values.tolist()
+
+    if usernames is not None and email in usernames:
+        return render_template("registerout.html", output="email taken")
+    elif passwords is not None and len(password) <= 4:
+        return render_template("registerout.html", output="password should have atleast 5 characters")
+    else:
+        username = email
+        X = pd.DataFrame([[None, None, None, None, None, None, None, username, password]],
+                         columns=["name", "workexp", "resume", "model_category", "username", "password"])
+
+        applicants = pd.concat([applicants, X], ignore_index=True)
+
+        applicants.to_csv("applicants.csv", index=False)
+        print(applicants.head())
+        return render_template("indexout.html", output="account created")
+        """
 
 @app.route("/appl_register", methods=['GET', 'POST'])
 @app.route("/appl_register/<string:username>", methods=['GET', 'POST'])
@@ -220,6 +248,51 @@ def recruit():
 
     return render_template('recruiter.html', Output=result)
 
+    """
+    names = None
+    appl_data = pd.read_csv("applicants.csv")
+    if (request.method == "POST"):
+
+        job_category_encoded = request.form.get("recSel")
+        print(type(job_category_encoded))
+
+        jc_string = int(job_category_encoded)
+        print(jc_string)
+        print(type(jc_string))
+        jc_list = [jc_string]
+        # jc_list = column_or_1d(jc_list,warn = True)
+
+        print(jc_list)
+        print(type(jc_list))
+        job_category = le.inverse_transform([jc_list])
+        print(job_category)
+        recruiter = pd.read_csv("applicants.csv", header=0, index_col=False)
+
+        # for i in range(len(recruiter)):
+        #     if(recruiter.loc[i,"model_category"] == job_category[0]):
+        #         # print(recruiter.loc[i,"name"])
+        #         names += (recruiter.loc[i,"name"])
+        #         names += '\n'
+
+        # print(names)
+        names = appl_data.loc[appl_data["model_category"] == job_category[0]]
+
+        # print(type(link_list))
+
+        names = names.values.tolist()
+        for i in range(len(names)):
+            for j in range(len(names[i])):
+                # if 1<=j<=3:
+                # temp_list = le.inverse_transform([names[i][j]])
+                # names[i][j] = temp_list[0]
+                names[i][j] = (j, names[i][j])
+        print(names)
+
+    # if names is None:
+    #     names = "No applicant has been found"
+    return render_template("recruiterout.html", output=names)
+    """
+
 
 # @app.errorhandler(404)
 # def page_not_found(error):
@@ -239,4 +312,5 @@ if __name__ == '__main__':
         applicants = pd.read_csv("assets/users.csv", header=0, index_col=False)
     except pd.errors.EmptyDataErrora as e:
         print(e)
-        applicants = pd.DataFrame(columns=['name', 'user_name', 'password', 'role', 'resume', 'job_category', 'work_exp'])
+        applicants = pd.DataFrame(
+            columns=['name', 'user_name', 'role', 'password', 'resume', 'job_category', 'work_exp'])
