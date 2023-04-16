@@ -15,9 +15,7 @@ app.config['UPLOAD_FOLDER'] = 'uploads'
 
 # global variables
 username = None
-applicants = pd.read_csv("../assets/users.csv", header=0, index_col=False)
-if applicants.size == 0:
-    applicants = pd.DataFrame(columns=['name', 'user_name', 'password', 'resume', 'job_category', 'work_exp'])
+applicants = None
 
 # maps
 exp_dic = {0: 'Early career (2-5 yr)', 1: 'Mid-level (5-10 yr)', 2: 'Senior (+10 yr, not executive)'}
@@ -74,7 +72,7 @@ def cleanResume(resumeText):
 
 @app.route("/", methods=['GET', 'POST'])
 def home():
-    return render_template("index.html")
+    return render_template(["newHome.html", "navbar1.html"])
 
 
 @app.route("/login", methods=['GET', 'POST'])
@@ -217,11 +215,17 @@ def recruit():
     return render_template('recruiter.html', Output=result)
 
 
-@app.errorhandler(404)
-def page_not_found(error):
-    return render_template('404.html'), 404
+# @app.errorhandler(404)
+# def page_not_found(error):
+#     return render_template('404.html'), 404
 
 
 # Running the app
 if __name__ == '__main__':
     app.run(debug=True)
+
+    try:
+        applicants = pd.read_csv("assets/users.csv", header=0, index_col=False)
+    except pd.errors.EmptyDataErrora as e:
+        print(e)
+        applicants = pd.DataFrame(columns=['name', 'user_name', 'password', 'role', 'resume', 'job_category', 'work_exp'])
