@@ -1,0 +1,37 @@
+{% macro add_navbar_with_username(username) %}
+<nav class="navbar sticky-top navbar-expand-lg navbar-dark bg-dark">
+  <div class="container-fluid">
+    <a class="navbar-brand p-2" href="/"> <img alt="" class="d-inline-block align-text-top" height="24"
+                                               src="/docs/5.0/assets/brand/bootstrap-logo.svg"
+                                               width="30">CareerCurve</a>
+    <button aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"
+            class="navbar-toggler" data-bs-target="#navbarSupportedContent" data-bs-toggle="collapse" type="button">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+        <li class="nav-item">
+          <a aria-current="page" class="nav-link active mx-3" href="/">Home</a>
+        </li>
+        <li class="nav-item">
+          <a aria-current="page" class="nav-link active mx-3" href="/about_us">About Us</a>
+        </li>
+        <li class="nav-item dropdown">
+          <a aria-expanded="false" class="nav-link active dropdown-toggle mx-3" data-bs-toggle="dropdown" href="#"
+             id="navbarDropdown" role="button">Login</a>
+          <ul aria-labelledby="navbarDropdown" class="dropdown-menu">
+            <li><a class="dropdown-item" href="/login/recruiter/0">As Recruiter</a></li>
+            <li>
+              <hr class="dropdown-divider">
+            </li>
+            <li><a class="dropdown-item" href="/login/applicant/0">As Applicant</a></li>
+          </ul>
+        </li>
+        <li class="nav-item">
+          <a aria-current="page" class="nav-link active mx-3">{{ username }}</a>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>
+{% endmacro %}

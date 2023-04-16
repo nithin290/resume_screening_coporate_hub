@@ -14,8 +14,9 @@ app = Flask(__name__)
 app.config['UPLOAD_FOLDER'] = 'uploads'
 
 # global variables
-username = None
+username = 'Unknown'
 applicants = None
+applicant_cols = ['username', 'password', 'role', 'email', 'name', 'resume', 'job_category', 'work_exp']
 
 # maps
 exp_dic = {0: 'Early career (2-5 yr)', 1: 'Mid-level (5-10 yr)', 2: 'Senior (+10 yr, not executive)'}
@@ -41,6 +42,11 @@ clf_knn = pickle.load(open('models/knn.pkl', 'rb'))
 clf_exp = pickle.load(open('models/svc2.pkl', 'rb'))
 exp_vec = pickle.load(open('models/vectorizer2.pkl', 'rb'))
 le = None
+
+
+def render_template_with_username(*parameters):
+    global username
+    return render_template(*parameters, username=username)
 
 
 def read_pdf(file):
@@ -72,56 +78,97 @@ def cleanResume(resumeText):
 
 @app.route("/", methods=['GET', 'POST'])
 def home():
-    return render_template(["newHome.html", "navbar1.html"])
+    return render_template("newHome.html", username=username)
 
 
-@app.route("/login", methods=['GET', 'POST'])
-@app.route("/login/<string:username>", methods=['GET', 'POST'])
-def login():
-    return 'login'
-
-
-@app.route("/rec_register", methods=['GET', 'POST'])
-@app.route("/rec_register/<string:username>", methods=['GET', 'POST'])
-def rec_register():
-    return render_template('recruiterRegister.html')
-
-    """
+@app.route("/login/<string:role>", methods=['GET', 'POST'])
+@app.route("/login/<string:role>/<int:user_id>", methods=['GET', 'POST'])
+def login(role, user_id):
     global applicants
     global username
 
-    email = request.form.get("email")
-    password = request.form.get("password")
-    usernames = None
-    passwords = None
-
-    if not applicants.empty:
-        usernames = applicants["username"].values.tolist()
-        passwords = applicants["password"].values.tolist()
-
-    if usernames is not None and email in usernames:
-        return render_template("registerout.html", output="email taken")
-    elif passwords is not None and len(password) <= 4:
-        return render_template("registerout.html", output="password should have atleast 5 characters")
+    if user_id == 0:
+        return render_template("login.html", login_output='', role=role, username=username)
     else:
-        username = email
-        X = pd.DataFrame([[None, None, None, None, None, None, None, username, password]],
-                         columns=["name", "workexp", "resume", "model_category", "username", "password"])
+        password = request.form.get("password")
+        user_name = request.form.get("username")
 
-        applicants = pd.concat([applicants, X], ignore_index=True)
+        # usernames = applicants["username"].values.tolist()
+        # passwords = applicants["password"].values.tolist()
 
-        applicants.to_csv("applicants.csv", index=False)
-        print(applicants.head())
-        return render_template("indexout.html", output="account created")
-        """
+        output_msg = None
+        row = applicants[applicants["username"] == user_name]
 
-@app.route("/appl_register", methods=['GET', 'POST'])
+        if row.size == 0:
+            output_msg = "username not found"
+        elif row.at[0, 'password'] != password:
+            output_msg = "Incorrect password"
+        elif row.at[0, 'role'] != role:
+            output_msg = "username found in different role"
+        else:
+            username = user_name
+
+        if output_msg is not None:
+            return render_template("login.html", login_output=output_msg, role=role, username=username)
+        else:
+            return render_template_with_username("newHome.html")
+
+
+@app.route("/register/<string:role>", methods=['GET', 'POST'])
+@app.route("/register/<string:role>/<int:user_id>", methods=['GET', 'POST'])
+def register(role, user_id):
+    global applicants
+    global username
+
+    if user_id == 0:
+        return render_template_with_username('register.html')
+    elif user_id == 1:
+
+        email = request.form.get("email")
+        password = request.form.get("password")
+        user_name = request.form.get("username")
+
+        print(email, password, user_name)
+
+        usernames = None
+        passwords = None
+
+        output_msg = None
+
+        if not applicants.empty:
+            usernames = applicants["username"].values.tolist()
+            passwords = applicants["password"].values.tolist()
+
+        if usernames is None:
+            username = user_name
+            X = pd.DataFrame([[username, password, 'Recruiter', email, None, None, None, None]], columns=applicant_cols)
+            applicants = pd.concat([applicants, X], ignore_index=True)
+            applicants.to_csv("assets/users.csv", index=False)
+            return render_template_with_username('newHome.html')
+        else:
+            if user_name in usernames:
+                output_msg = "username is already taken"
+            elif len(password) < 4:
+                output_msg = "length of password must of at least 4 characters"
+            else:
+                username = user_name
+                X = pd.DataFrame([[username, password, role, email, None, None, None, None]],
+                                 columns=applicant_cols)
+                applicants = pd.concat([applicants, X], ignore_index=True)
+                applicants.to_csv("assets/users.csv", index=False)
+
+                output_msg = "account created successfully"
+
+                return render_template_with_username('newHome.html')
+
+        return render_template('register.html', register_output=output_msg, role=role, username=username)
+
+
 @app.route("/appl_register/<string:username>", methods=['GET', 'POST'])
 def appl_register():
-    return render_template('applicantRegister.html')
+    return render_template_with_username('applicantRegister.html')
 
 
-@app.route("/apply/", methods=['GET', 'POST'])
 @app.route("/apply/<int:user_id>", methods=['GET', 'POST'])
 def apply(user_id=None):
     global username
@@ -177,8 +224,6 @@ def apply(user_id=None):
         probabilities_nb[0][int(job_role2)] = -1
         job_role3 = f'{np.argmax(probabilities_nb)}'
 
-
-
         print(applicants.tail())
         # applicants.append({"name":name,"pref1":pref1,"pref2":pref2,"pref3":pref3,"workexp":workexp,"resume":X['Resume']},ignore_index = True)
         # applicants = pd.concat([applicants,X],ignore_index = True)
@@ -212,7 +257,6 @@ def apply(user_id=None):
     print(f'user_id is not present in url')
 
 
-@app.route("/recruit", methods=['GET', 'POST'])
 @app.route("/recruit/<int:recruition_id>", methods=['GET', 'POST'])
 def recruit():
     nr = pd.read_csv('assets/newResumes.csv', encoding='utf-8')
@@ -306,11 +350,11 @@ def about_us():
 
 # Running the app
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port='80', debug=True)
 
     try:
         applicants = pd.read_csv("assets/users.csv", header=0, index_col=False)
-    except pd.errors.EmptyDataErrora as e:
+    except pd.errors.EmptyDataError as e:
         print(e)
-        applicants = pd.DataFrame(
-            columns=['name', 'user_name', 'role', 'password', 'resume', 'job_category', 'work_exp'])
+        applicants = pd.DataFrame(columns=applicant_cols)
+
+    app.run(host='0.0.0.0', port='80', debug=True)
