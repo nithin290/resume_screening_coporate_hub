@@ -1,16 +1,16 @@
 import pickle
 import re
+import warnings
 
 import PyPDF2
 import numpy as np
 import pandas as pd
 from flask import Flask, request, render_template
-from werkzeug.exceptions import abort
 
-# Declaring a Flask app
+warnings.filterwarnings("ignore", category=DeprecationWarning)
+warnings.filterwarnings("ignore", category=UserWarning)
+
 app = Flask(__name__)
-
-# setting config
 app.config['UPLOAD_FOLDER'] = 'uploads'
 
 # global variables
@@ -81,10 +81,16 @@ def login():
     return 'login'
 
 
-@app.route("/register", methods=['GET', 'POST'])
-@app.route("/register/<string:username>", methods=['GET', 'POST'])
-def register():
-    return 'register'
+@app.route("/rec_register", methods=['GET', 'POST'])
+@app.route("/rec_register/<string:username>", methods=['GET', 'POST'])
+def rec_register():
+    return render_template('recruiterRegister.html')
+
+
+@app.route("/appl_register", methods=['GET', 'POST'])
+@app.route("/appl_register/<string:username>", methods=['GET', 'POST'])
+def appl_register():
+    return render_template('applicantRegister.html')
 
 
 @app.route("/apply/", methods=['GET', 'POST'])
@@ -220,9 +226,14 @@ def recruit():
 #     return render_template('404.html'), 404
 
 
+@app.route("/about_us", methods=['GET', 'POST'])
+def about_us():
+    return render_template('aboutUs.html')
+
+
 # Running the app
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(host='0.0.0.0', port='80', debug=True)
 
     try:
         applicants = pd.read_csv("assets/users.csv", header=0, index_col=False)
