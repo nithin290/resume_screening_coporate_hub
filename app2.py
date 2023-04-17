@@ -42,7 +42,8 @@ clf_nb = pickle.load(open('models/mnb.pkl', 'rb'))
 clf_knn = pickle.load(open('models/knn.pkl', 'rb'))
 clf_exp = pickle.load(open('models/svc2.pkl', 'rb'))
 exp_vec = pickle.load(open('models/vectorizer2.pkl', 'rb'))
-le = None
+clf_jd = pickle.load(open('models/svc3.pkl', 'rb'))
+jd_vec = pickle.load(open('models/vectorizer3.pkl', 'rb'))
 
 
 def render_template_with_username(*parameters):
@@ -244,7 +245,10 @@ def apply(user_id=None):
                 applicants.to_csv("assets/users.csv", index=False)
 
                 companies = pd.read_csv('assets/links_new.csv')
-                selected_companies = list(companies[companies['Job Title'] == le_name_mapping[int(job_role1)]].values)
+                selected_companies = list(companies[companies['Job Title'] == le_name_mapping[int(job_role1)]][
+                                              ["Company Name", "Company Location", "Company Job Title",
+                                               "Company Link"]].values)
+                print(selected_companies)
 
                 for i in range(len(selected_companies)):
                     for j in range(len(selected_companies[i])):
@@ -257,40 +261,47 @@ def apply(user_id=None):
 
 @app.route("/recruit/<int:user_id>", methods=['GET', 'POST'])
 def recruit(user_id=None):
-    if user_id == 0:
-        return render_template_with_username('recruiterDashBoard.html')
+    global user
 
-    nr = pd.read_csv('assets/newResumes.csv', encoding='utf-8')
-
-    job_avail = request.form['job role'].lower()
-    experience = int(request.form['work exp'])
-    result = ''
-    jd = request.form['job description'].lower()
-    jd = cleanResume(jd)
-    predicted_job_role = job_desc[clf_jd.predict(jd)[0]]
-    resumeDataSet = pd.read_csv('assets/Resume_With_Experience.csv', encoding='utf-8')
-    req_exp = ''
-    if experience < 5:
-        req_exp = 'Early career (2-5 yr)'
-    elif experience < 10:
-        req_exp = 'Mid-level (5-10 yr)'
+    if user['username'] == 'unknown' or user['role'] != 'recruiter':
+        return redirect(url_for('home'))
     else:
-        req_exp = 'Senior (+10 yr, not executive)'
-    for person in range(len(nr['Name'])):
-        if nr['Job-Role1'][person].lower() == job_avail and int(nr['Experience'][person]) >= experience:
-            result += nr['Name'][person] + '\n\n'
-    for person in range(len(nr['Name'])):
-        if nr['Job-Role2'][person].lower() == job_avail and int(nr['Experience'][person]) >= experience:
-            result += nr['Name'][person] + '\n\n'
-    for person in range(len(nr['Name'])):
-        if nr['Job-Role3'][person].lower() == job_avail and int(nr['Experience'][person]) >= experience:
-            result += nr['Name'][person] + '\n\n'
-    for person in range(len(resumeDataSet['Category'])):
-        if resumeDataSet['Category'][person].lower() == job_avail and \
-                resumeDataSet['EXP'][person] == req_exp:
-            result += f'resume index : {person + 2}' + '\n\n'
+        if user_id == 0:
+            return render_template('recruiterDashBoard.html', username=user['username'], output=None)
+        elif user_id == 1:
+            if request.method == "POST":
 
-    return render_template('recruiter.html', Output=result)
+                nr = pd.read_csv('assets/newResumes.csv', encoding='utf-8')
+                job_avail = request.form['job role'].lower()
+                experience = int(request.form['work exp'])
+                result = ''
+                jd = request.form['job description'].lower()
+                jd = cleanResume(jd)
+                WordFeatures2 = jd_vec.transform([jd])
+                predicted_job_role = job_desc[clf_jd.predict(WordFeatures2)[0]]
+                resumeDataSet = pd.read_csv('assets/Resume_With_Experience.csv', encoding='utf-8')
+                req_exp = ''
+                if experience < 5:
+                    req_exp = 'Early career (2-5 yr)'
+                elif experience < 10:
+                    req_exp = 'Mid-level (5-10 yr)'
+                else:
+                    req_exp = 'Senior (+10 yr, not executive)'
+                for person in range(len(nr['Name'])):
+                    if nr['Job-Role1'][person].lower() == job_avail and nr['Experience'][person] == req_exp:
+                        result += nr['Name'][person] + '\n\n'
+                for person in range(len(nr['Name'])):
+                    if nr['Job-Role2'][person].lower() == job_avail and nr['Experience'][person] == req_exp:
+                        result += nr['Name'][person] + '\n\n'
+                for person in range(len(nr['Name'])):
+                    if nr['Job-Role3'][person].lower() == job_avail and nr['Experience'][person] == req_exp:
+                        result += nr['Name'][person] + '\n\n'
+                for person in range(len(resumeDataSet['Category'])):
+                    if resumeDataSet['Category'][person].lower() == job_avail and \
+                            resumeDataSet['EXP'][person] == req_exp:
+                        result += f'resume index : {person + 2}' + '\n\n'
+
+                return render_template('recruiter.html', Output=result)
 
     """
     names = None

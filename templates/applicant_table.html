@@ -1,26 +1,26 @@
-{% macro add_jobs_table(output) %}
+{% macro add_applicant_table(output) %}
 {% if output != None %}
 <table class="table">
     <thead class="thead-dark">
     <tr>
-        <th> Company_Name</th>
-        <th> Company_Location</th>
-        <th> Company_Job_Title</th>
-        <th> Company_Link</th>
+        <!-- name,pref1,pref2,pref3,workexp,resume,model_category -->
+        <th> name</th>
+        <th> pref1</th>
+        <th> pref2</th>
+        <th> pref3</th>
+        <th> workexp</th>
     </tr>
     <thead>
     {%for row in output%}
     <tr>
         {%for i,col in row%}
 
-        {%if i != 3%}
+        {%if i <=4 %}
         <td> {{col}}</td>
-        {%else%}
-        <td><a href={{col}} rel="noopener noreferrer" target="_blank">link</a></td>
+
         {%endif%}
         {%endfor%}
     </tr>
-
     {%endfor%}
 </table>
 {% endif %}

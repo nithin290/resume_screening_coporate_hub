@@ -25,6 +25,12 @@
 
 {{ add_navbar_with_username(username) }}
 
+<div>
+    <br>
+    <br>
+    {{ add_jobs_table(output) }}
+</div>
+
 <div class="container mt-5">
     <form action="{{ url_for('apply', user_id=1) }}" enctype="multipart/form-data" method="post" onsubmit="show">
         <h1 class="main_heading">Take one step ahead in your career with JobHub</h1>
@@ -38,12 +44,6 @@
     </form>
 </div>
 
-
-<div>
-    <br>
-    <br>
-    {{ add_jobs_table(output) }}
-</div>
 
 <script type="text/javascript">
         function show() {
