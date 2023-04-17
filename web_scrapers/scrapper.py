@@ -16,7 +16,7 @@ def scrapper(skill='Python Developer', location='India'):
     results = soup.find_all(class_='resultContent')
 
     links = []
-
+    cn = []
     for i, job in enumerate(results):
         if len(links) == 7:
             break
@@ -30,6 +30,10 @@ def scrapper(skill='Python Developer', location='India'):
         sub_result = soup.find(class_='css-1e1cf96 eu4oa1w0')
 
         # print(sub_result)
+        for el in soup.select("[data-company-name='true']"):
+            name = el.find("a")
+            name = name.text
+            print(name)
 
         if sub_result is not None:
             apply = sub_result.find("a")
