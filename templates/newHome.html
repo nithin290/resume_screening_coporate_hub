@@ -16,7 +16,7 @@
     <script src="{{ url_for('static', filename='include-html.min.js') }}"></script>
 </head>
 
-<body>
+<body id="body">
 
 {{ add_navbar_with_username(username) }}
 <div class="homepage">
@@ -28,38 +28,38 @@
             <h4 class="text-white mb-3">The Ultimate Job Search and Recruitment Platform</h4>
         </div>
 
-        <div class="mission">
-            <h3>Our Mission : </h3>
-                <p>To Revolutionize the Job Market, Empowering Careers, Building Teams!</p>
-                <p>To Make Recruitment Seamless and Easy, Connecting Job Seekers and Employers</p>
-                <p>Help You Succeed to Unlock Your Career Potential with Our Innovative Platform</p>
-                <p>Diversity, Inclusion, and Equal Opportunities</p>
-                <p>To Build Your Success Story From Dream Job to Dream Team</p>
-            </div>
+<!--        <div class="mission">-->
+<!--            <h3>Our Mission : </h3>-->
+<!--                <p>To Revolutionize the Job Market, Empowering Careers, Building Teams!</p>-->
+<!--                <p>To Make Recruitment Seamless and Easy, Connecting Job Seekers and Employers</p>-->
+<!--                <p>Help You Succeed to Unlock Your Career Potential with Our Innovative Platform</p>-->
+<!--                <p>Diversity, Inclusion, and Equal Opportunities</p>-->
+<!--                <p>To Build Your Success Story From Dream Job to Dream Team</p>-->
+<!--            </div>-->
 
-            <div class="whoWeAre">
-                <h3>Who We Are : </h3>
-                <p>The Bridge Between Job Seekers and Employers!</p>
-                <p>Creating Opportunities, Empowering Careers - Meet the Team Behind Our Mission!</p>
-                <p>Innovation, Passion, and Dedication - Get to Know the Heart of Our Company!</p>
-                <p>Transforming the Job Market, One Connection at a Time - Join Our Journey!</p>
-                <p>Believe in Empowering Individuals and Building Stronger Teams</p>
-            </div>
-
+<!--            <div class="whoWeAre">-->
+<!--                <h3>Who We Are : </h3>-->
+<!--                <p>The Bridge Between Job Seekers and Employers!</p>-->
+<!--                <p>Creating Opportunities, Empowering Careers - Meet the Team Behind Our Mission!</p>-->
+<!--                <p>Innovation, Passion, and Dedication - Get to Know the Heart of Our Company!</p>-->
+<!--                <p>Transforming the Job Market, One Connection at a Time - Join Our Journey!</p>-->
+<!--                <p>Believe in Empowering Individuals and Building Stronger Teams</p>-->
+<!--            </div>-->
+            <br><br><br>
             <div class="final">
                 <span class="linkbutton"><a class="linkbutton" href="{{ url_for('apply', user_id=0) }}">Apply</a></span>
                 <span class="linkbutton"><a class="linkbutton"
                                             href="{{ url_for('recruit', user_id=0) }}">Recruit</a></span>
             </div>
-
-            <div class="aboutUs">
-                <p>Welcome to <b>JobHub</b>, your go-to destination for all your job search and recruitment needs.
-                    We are a dedicated team of professionals who are passionate about connecting job seekers with their
-                    dream jobs and helping employers find the best talent for their organizations.</p>
-                <p>Our platform is designed to make the job search and recruitment process efficient, effective, and easy. We provide a user-friendly interface that allows job seekers to easily search for open positions, create resumes, and apply for jobs. We also provide a comprehensive suite of tools for employers to post job openings, review resumes, and communicate with candidates.</p>
-                <p>At <b>JobHub</b>, we believe that finding the right job or candidate is not just about matching skills and qualifications. It's about finding the right fit, the right culture, and the right values. That's why we put a strong emphasis on creating a personalized experience for our users, based on their unique preferences and requirements.</p>
-                <p>We are committed to providing exceptional service, innovative technology, and a seamless user experience. Our team is dedicated to continuously improving our platform and expanding our offerings to meet the evolving needs of our users.</p>
-            </div>
+            <br><br><br>
+<!--            <div class="aboutUs">-->
+<!--                <p>Welcome to <b>JobHub</b>, your go-to destination for all your job search and recruitment needs.-->
+<!--                    We are a dedicated team of professionals who are passionate about connecting job seekers with their-->
+<!--                    dream jobs and helping employers find the best talent for their organizations.</p>-->
+<!--                <p>Our platform is designed to make the job search and recruitment process efficient, effective, and easy. We provide a user-friendly interface that allows job seekers to easily search for open positions, create resumes, and apply for jobs. We also provide a comprehensive suite of tools for employers to post job openings, review resumes, and communicate with candidates.</p>-->
+<!--                <p>At <b>JobHub</b>, we believe that finding the right job or candidate is not just about matching skills and qualifications. It's about finding the right fit, the right culture, and the right values. That's why we put a strong emphasis on creating a personalized experience for our users, based on their unique preferences and requirements.</p>-->
+<!--                <p>We are committed to providing exceptional service, innovative technology, and a seamless user experience. Our team is dedicated to continuously improving our platform and expanding our offerings to meet the evolving needs of our users.</p>-->
+<!--            </div>-->
 
             <div class="final">
                 <p class="mt-3">Thank you for choosing <b>JobHub</b> for your job search and recruitment needs. We
