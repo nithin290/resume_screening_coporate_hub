@@ -1,5 +1,5 @@
 {% from 'macros.html' import add_navbar_with_username %}
-{% from 'job_table.html' import add_jobs_table %}
+{% from 'applicant_table.html' import add_applicant_table %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -7,6 +7,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>JobHub | Recruiter</title>
+    <link href="{{ url_for('static', filename='home.css') }}" rel="stylesheet">
     <link crossorigin="anonymous" href="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/css/bootstrap.min.css"
           integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
@@ -24,10 +25,47 @@
 {{ add_navbar_with_username(username) }}
 <div class="container mt-5">
     <form action="{{ url_for('recruit', user_id=1) }}" enctype="multipart/form-data" method="post">
-        <h1 class="main_heading">Enter the Job Description You Wants</h1>
-        <p>Job Role : <input type="text" name="job role" placeholder="Enter the job role that you want" required></p>
-        <p>Work Experience : <input type="number" name="work exp"
+        <br>
+        <h1 class="main_heading">Enter the Job Description </h1>
+        <br>
+        <!--        <p>Job Role : <input type="text" name="job role" placeholder="Enter the job role that you want" required></p>-->
+
+        <div class="input-group mb-3">
+
+            <label class="input-group-text" for="pref1">Job Role</label>
+            <select class="form-select" id="pref1" name="job role">
+                <option disabled hidden selected>Open this select menu</option>
+                <option value="1">1. Advocate</option>
+                <option value="2">2. Arts</option>
+                <option value="3">3. Automation Testing</option>
+                <option value="4">4. Blockchain</option>
+                <option value="5">5. Business Analyst</option>
+                <option value="6">6. Civil Engineer</option>
+                <option value="7">7. Data Science</option>
+                <option value="8">8. Database</option>
+                <option value="9">9. DevOps Engineer</option>
+                <option value="10">10. DotNet Developer</option>
+                <option value="11">11. ETL Developer</option>
+                <option value="12">12. Electrical Engineering</option>
+                <option value="13">13. HR</option>
+                <option value="14">14. Hadoop</option>
+                <option value="15">15. Health and fitness</option>
+                <option value="16">16. Java Developer</option>
+                <option value="17">17. Mechanical Engineer</option>
+                <option value="18">18. Network Security Engineer</option>
+                <option value="19">19. Operations Manager</option>
+                <option value="20">20. PMO</option>
+                <option value="21">21. Python Developer</option>
+                <option value="22">22. SAP Developer</option>
+                <option value="23">23. Sales</option>
+                <option value="24">24. Testing</option>
+                <option value="25">25. Web Designing</option>
+            </select>
+        </div>
+
+        <p>Work Experience : <input name="work_exp" type="number"
                                     placeholder="Enter the required work experience in years" required></p>
+
         <p>Job Description : <textarea name="job description" id="jobdescription"
                                        placeholder="Enter the Detailed Job Description" cols="100" rows="10"></textarea>
         </p>
@@ -38,7 +76,7 @@
 <div>
     <br>
     <br>
-    {{ add_jobs_table(output) }}
+    {{ add_applicant_table(output) }}
 </div>
 </body>
 </html>

@@ -177,12 +177,13 @@ def logout():
     return redirect(url_for('home'))
 
 
+@app.route("/apply", methods=['GET', 'POST'])
 @app.route("/apply/<int:user_id>", methods=['GET', 'POST'])
 def apply(user_id=None):
     global user
 
     if user['username'] == 'unknown' or user['role'] != 'applicant':
-        return redirect(url_for('home'))
+        return redirect(url_for('login', role='applicant', user_id=0))
     else:
         if user_id == 0:
             return render_template('applicantDashBoard.html', username=user['username'], output=None)
@@ -259,94 +260,69 @@ def apply(user_id=None):
             raise Exception("Error in url, used_id can only be 0 or 1")
 
 
+@app.route("/recruit/", methods=['GET', 'POST'])
 @app.route("/recruit/<int:user_id>", methods=['GET', 'POST'])
 def recruit(user_id=None):
     global user
 
     if user['username'] == 'unknown' or user['role'] != 'recruiter':
-        return redirect(url_for('home'))
+        return redirect(url_for('login', role='recruiter', user_id=0))
     else:
         if user_id == 0:
             return render_template('recruiterDashBoard.html', username=user['username'], output=None)
         elif user_id == 1:
             if request.method == "POST":
 
-                nr = pd.read_csv('assets/newResumes.csv', encoding='utf-8')
-                job_avail = request.form['job role'].lower()
-                experience = int(request.form['work exp'])
-                result = ''
-                jd = request.form['job description'].lower()
-                jd = cleanResume(jd)
-                WordFeatures2 = jd_vec.transform([jd])
-                predicted_job_role = job_desc[clf_jd.predict(WordFeatures2)[0]]
-                resumeDataSet = pd.read_csv('assets/Resume_With_Experience.csv', encoding='utf-8')
+                job_role = float(request.form.get('job role')) - 1
+                exp = int(request.form.get('work_exp'))
+
+                # nr = pd.read_csv('assets/newResumes.csv', encoding='utf-8')
+                # job_avail = request.form['job role'].lower()
+                # experience = int(request.form['work exp'])
+                # result = ''
+                # jd = request.form['job description'].lower()
+                # jd = cleanResume(jd)
+                # WordFeatures2 = jd_vec.transform([jd])
+                # predicted_job_role = job_desc[clf_jd.predict(WordFeatures2)[0]]
+                # resumeDataSet = pd.read_csv('assets/Resume_With_Experience.csv', encoding='utf-8')
+
                 req_exp = ''
-                if experience < 5:
+                if exp < 5:
                     req_exp = 'Early career (2-5 yr)'
-                elif experience < 10:
+                elif exp < 10:
                     req_exp = 'Mid-level (5-10 yr)'
                 else:
                     req_exp = 'Senior (+10 yr, not executive)'
-                for person in range(len(nr['Name'])):
-                    if nr['Job-Role1'][person].lower() == job_avail and nr['Experience'][person] == req_exp:
-                        result += nr['Name'][person] + '\n\n'
-                for person in range(len(nr['Name'])):
-                    if nr['Job-Role2'][person].lower() == job_avail and nr['Experience'][person] == req_exp:
-                        result += nr['Name'][person] + '\n\n'
-                for person in range(len(nr['Name'])):
-                    if nr['Job-Role3'][person].lower() == job_avail and nr['Experience'][person] == req_exp:
-                        result += nr['Name'][person] + '\n\n'
-                for person in range(len(resumeDataSet['Category'])):
-                    if resumeDataSet['Category'][person].lower() == job_avail and \
-                            resumeDataSet['EXP'][person] == req_exp:
-                        result += f'resume index : {person + 2}' + '\n\n'
 
-                return render_template('recruiter.html', Output=result)
+                # for person in range(len(nr['Name'])):
+                #     if nr['Job-Role1'][person].lower() == job_avail and nr['Experience'][person] == req_exp:
+                #         result += nr['Name'][person] + '\n\n'
+                # for person in range(len(nr['Name'])):
+                #     if nr['Job-Role2'][person].lower() == job_avail and nr['Experience'][person] == req_exp:
+                #         result += nr['Name'][person] + '\n\n'
+                # for person in range(len(nr['Name'])):
+                #     if nr['Job-Role3'][person].lower() == job_avail and nr['Experience'][person] == req_exp:
+                #         result += nr['Name'][person] + '\n\n'
+                # for person in range(len(resumeDataSet['Category'])):
+                #     if resumeDataSet['Category'][person].lower() == job_avail and \
+                #             resumeDataSet['EXP'][person] == req_exp:
+                #         result += f'resume index : {person + 2}' + '\n\n'
 
-    """
-    names = None
-    appl_data = pd.read_csv("applicants.csv")
-    if (request.method == "POST"):
+                print(job_role)
+                print(applicants['job_category'])
 
-        job_category_encoded = request.form.get("recSel")
-        print(type(job_category_encoded))
+                selected_applicants = list(applicants[(applicants['job_category'] == job_role)
+                                                      & (applicants['work_exp'] == req_exp)]
+                                           [["name", "email", "work_exp"]].values)
 
-        jc_string = int(job_category_encoded)
-        print(jc_string)
-        print(type(jc_string))
-        jc_list = [jc_string]
-        # jc_list = column_or_1d(jc_list,warn = True)
+                for i in range(len(selected_applicants)):
+                    for j in range(len(selected_applicants[i])):
+                        selected_applicants[i][j] = (j, selected_applicants[i][j])
+                print(selected_applicants)
 
-        print(jc_list)
-        print(type(jc_list))
-        job_category = le.inverse_transform([jc_list])
-        print(job_category)
-        recruiter = pd.read_csv("applicants.csv", header=0, index_col=False)
-
-        # for i in range(len(recruiter)):
-        #     if(recruiter.loc[i,"model_category"] == job_category[0]):
-        #         # print(recruiter.loc[i,"name"])
-        #         names += (recruiter.loc[i,"name"])
-        #         names += '\n'
-
-        # print(names)
-        names = appl_data.loc[appl_data["model_category"] == job_category[0]]
-
-        # print(type(link_list))
-
-        names = names.values.tolist()
-        for i in range(len(names)):
-            for j in range(len(names[i])):
-                # if 1<=j<=3:
-                # temp_list = le.inverse_transform([names[i][j]])
-                # names[i][j] = temp_list[0]
-                names[i][j] = (j, names[i][j])
-        print(names)
-
-    # if names is None:
-    #     names = "No applicant has been found"
-    return render_template("recruiterout.html", output=names)
-    """
+            # if names is None:
+            #     names = "No applicant has been found"
+            return render_template("recruiterDashBoard.html", username=user['username'], output=selected_applicants)
 
 
 # @app.errorhandler(404)
