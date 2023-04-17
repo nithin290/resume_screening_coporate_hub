@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CareerCurve | Home</title>
+    <title>JobHub | Home</title>
     <link href="{{ url_for('static', filename='home.css') }}" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
           integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
@@ -24,19 +24,12 @@
          style="background: url('../static/Images/homepagebg.jpg') center center no-repeat fixed; height: 100vh;">
         <div class="mask">
             <div class="d-flex justify-content-center align-items-center h-100">
-                <h3 class="text-white m-3">Find Your Dream Job or Perfect Candidate with CareerCurve</h3>
+                <h3 class="text-white m-3">Find Your Dream Job or Perfect Candidate with <b>JobHub</b></h3>
             </div>
             <div class="d-flex justify-content-center align-items-center h-100">
                 <h4 class="text-white mb-3">The Ultimate Job Search and Recruitment Platform</h4>
             </div>
-            <div class="aboutUs">
-                <p>Welcome to <b>CareerCurve</b>, your go-to destination for all your job search and recruitment needs.
-                    We are a dedicated team of professionals who are passionate about connecting job seekers with their
-                    dream jobs and helping employers find the best talent for their organizations.</p>
-                <p>Our platform is designed to make the job search and recruitment process efficient, effective, and easy. We provide a user-friendly interface that allows job seekers to easily search for open positions, create resumes, and apply for jobs. We also provide a comprehensive suite of tools for employers to post job openings, review resumes, and communicate with candidates.</p>
-                <p>At <b>CareerCurve</b>, we believe that finding the right job or candidate is not just about matching skills and qualifications. It's about finding the right fit, the right culture, and the right values. That's why we put a strong emphasis on creating a personalized experience for our users, based on their unique preferences and requirements.</p>
-                <p>We are committed to providing exceptional service, innovative technology, and a seamless user experience. Our team is dedicated to continuously improving our platform and expanding our offerings to meet the evolving needs of our users.</p>
-            </div>
+
             <div class="mission">
                 <h3>Our Mission : </h3>
                 <p>To Revolutionize the Job Market, Empowering Careers, Building Teams!</p>
@@ -59,7 +52,19 @@
                 <span class="linkbutton"><a class="linkbutton" href="{{ url_for('apply', user_id=0) }}">Apply</a></span>
                 <span class="linkbutton"><a class="linkbutton"
                                             href="{{ url_for('recruit', user_id=0) }}">Recruit</a></span>
-                <p class="mt-3">Thank you for choosing <b>CareerCurve</b> for your job search and recruitment needs. We
+            </div>
+
+            <div class="aboutUs">
+                <p>Welcome to <b>JobHub</b>, your go-to destination for all your job search and recruitment needs.
+                    We are a dedicated team of professionals who are passionate about connecting job seekers with their
+                    dream jobs and helping employers find the best talent for their organizations.</p>
+                <p>Our platform is designed to make the job search and recruitment process efficient, effective, and easy. We provide a user-friendly interface that allows job seekers to easily search for open positions, create resumes, and apply for jobs. We also provide a comprehensive suite of tools for employers to post job openings, review resumes, and communicate with candidates.</p>
+                <p>At <b>JobHub</b>, we believe that finding the right job or candidate is not just about matching skills and qualifications. It's about finding the right fit, the right culture, and the right values. That's why we put a strong emphasis on creating a personalized experience for our users, based on their unique preferences and requirements.</p>
+                <p>We are committed to providing exceptional service, innovative technology, and a seamless user experience. Our team is dedicated to continuously improving our platform and expanding our offerings to meet the evolving needs of our users.</p>
+            </div>
+
+            <div class="final">
+                <p class="mt-3">Thank you for choosing <b>JobHub</b> for your job search and recruitment needs. We
                     look forward to helping you achieve your career goals and organizational objectives.</p>
             </div>
 

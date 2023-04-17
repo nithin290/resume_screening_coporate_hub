@@ -14,7 +14,8 @@
     border-radius: 4px;
 } 
 
-input[type="text"], 
+input[type="text"],
+input[type="number"],
 select, textarea{
     width: 100%;
     padding: 12px;

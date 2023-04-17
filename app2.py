@@ -364,4 +364,4 @@ if __name__ == '__main__':
         print(e)
         applicants = pd.DataFrame(columns=applicant_cols)
 
-    app.run(host='0.0.0.0', port='80', debug=True)
+    app.run(host='0.0.0.0', port='5000', debug=True)
