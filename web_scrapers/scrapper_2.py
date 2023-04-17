@@ -33,16 +33,30 @@ def scrapper(skill='Python Developer', location='India'):
     driver = webdriver.Chrome(executable_path=DRIVER_PATH, options=options)
     driver.get(url)
 
-    soup = BeautifulSoup(driver.page_source, 'html.parser')
-
     soup = bs.BeautifulSoup(driver.page_source, 'html.parser')
     for ele in soup.find_all(class_="css-1m4cuuf e37uo190"):
+        if len(df.values) >= 8:
+            break
         ele = ele.parent()
         job = ele[0].find(class_="jcs-JobTitle css-jspxzf eu4oa1w0")
         s1 = base + job["href"]
         cn = ele[6].find(class_="turnstileLink companyOverviewLink")
         if cn is not None:
             cn = cn.text
+        else:
+            driver.get(base + job['href'])
+            soup = BeautifulSoup(driver.page_source, 'html.parser')
+            soup.find(class_='css-1e1cf96 eu4oa1w0')
+
+            # print(sub_result)
+            for el in soup.select("[data-company-name='true']"):
+                name = el.find("a")
+                if name is None:
+                    name = 'N/A'
+                else:
+                    name = name.contents[0]
+                cn = name
+                print(name)
         lc = ele[4].find(class_="companyLocation")
         if lc is not None:
             lc = lc.text
