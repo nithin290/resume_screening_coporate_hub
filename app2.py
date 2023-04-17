@@ -78,7 +78,7 @@ def cleanResume(resumeText):
 
 @app.route("/", methods=['GET', 'POST'])
 def home():
-    return render_template("newHome.html", username=username)
+    return render_template_with_username("newHome.html")
 
 
 @app.route("/login/<string:role>", methods=['GET', 'POST'])
@@ -97,13 +97,15 @@ def login(role, user_id):
         # passwords = applicants["password"].values.tolist()
 
         output_msg = None
-        row = applicants[applicants["username"] == user_name]
+        row = applicants[applicants["username"] == user_name].to_dict(orient='index')
 
-        if row.size == 0:
+        if len(row) == 0:
             output_msg = "username not found"
-        elif row.at[0, 'password'] != password:
+        elif len(row) > 1:
+            raise Exception("More than one user found with the same username")
+        elif row[list(row.keys())[0]]['password'] != password:
             output_msg = "Incorrect password"
-        elif row.at[0, 'role'] != role:
+        elif row[list(row.keys())[0]]['role'] != role:
             output_msg = "username found in different role"
         else:
             username = user_name
@@ -168,9 +170,13 @@ def logout():
     username = 'Unknown'
     return redirect(url_for('home'))
 
+
 @app.route("/apply/<int:user_id>", methods=['GET', 'POST'])
 def apply(user_id=None):
     global username
+
+    if user_id == 0:
+        return render_template_with_username('applicantDashBoard.html')
 
     links = pd.read_csv("../assets/links_new.csv")
     link_list = None
@@ -255,8 +261,11 @@ def apply(user_id=None):
     print(f'user_id is not present in url')
 
 
-@app.route("/recruit/<int:recruition_id>", methods=['GET', 'POST'])
-def recruit():
+@app.route("/recruit/<int:user_id>", methods=['GET', 'POST'])
+def recruit(user_id=None):
+    if user_id == 0:
+        return render_template_with_username('recruiterDashBoard.html')
+
     nr = pd.read_csv('assets/newResumes.csv', encoding='utf-8')
 
     job_avail = request.form['job role'].lower()
