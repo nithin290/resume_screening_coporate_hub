@@ -21,7 +21,7 @@
 {{ add_navbar_with_username(username) }}
 
     <div class="homepage"
-         style="background: url('../static/Images/homepagebg.jpg') center center no-repeat fixed; height: 100vh;">
+         style="background: {{ url_for('static', filename='/Images/homepagebg.jpg') }} center center no-repeat fixed; height: 100vh;">
         <div class="mask">
             <div class="d-flex justify-content-center align-items-center h-100">
                 <h3 class="text-white m-3">Find Your Dream Job or Perfect Candidate with <b>JobHub</b></h3>

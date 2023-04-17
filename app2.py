@@ -14,7 +14,8 @@ app = Flask(__name__)
 app.config['UPLOAD_FOLDER'] = 'uploads'
 
 # global variables
-username = 'Unknown'
+user = {'username': 'Unknown', 'role': None}
+
 applicants = None
 applicant_cols = ['username', 'password', 'role', 'email', 'name', 'resume', 'job_category', 'work_exp']
 
@@ -45,8 +46,8 @@ le = None
 
 
 def render_template_with_username(*parameters):
-    global username
-    return render_template(*parameters, username=username)
+    global user
+    return render_template(*parameters, username=user['username'])
 
 
 def read_pdf(file):
@@ -85,10 +86,10 @@ def home():
 @app.route("/login/<string:role>/<int:user_id>", methods=['GET', 'POST'])
 def login(role, user_id):
     global applicants
-    global username
+    global user
 
     if user_id == 0:
-        return render_template("login.html", login_output="", role=role, username=username)
+        return render_template("login.html", login_output="", role=role, username=user['username'])
     else:
         password = request.form.get("password")
         user_name = request.form.get("username")
@@ -108,10 +109,11 @@ def login(role, user_id):
         elif row[list(row.keys())[0]]['role'] != role:
             output_msg = "username found in different role"
         else:
-            username = user_name
+            user['username'] = user_name
+            user['role'] = role
 
         if output_msg is not None:
-            return render_template("login.html", login_output=output_msg, role=role, username=username)
+            return render_template("login.html", login_output=output_msg, role=role, username=user['username'])
         else:
             return render_template_with_username("newHome.html")
 
@@ -120,10 +122,10 @@ def login(role, user_id):
 @app.route("/register/<string:role>/<int:user_id>", methods=['GET', 'POST'])
 def register(role, user_id):
     global applicants
-    global username
+    global user
 
     if user_id == 0:
-        return render_template('register.html', role=role, username=username)
+        return render_template('register.html', role=role, username=user['username'])
     elif user_id == 1:
 
         email = request.form.get("email")
@@ -140,8 +142,10 @@ def register(role, user_id):
             passwords = applicants["password"].values.tolist()
 
         if usernames is None:
-            username = user_name
-            X = pd.DataFrame([[username, password, 'Recruiter', email, None, None, None, None]], columns=applicant_cols)
+            user['username'] = user_name
+            user['role'] = role
+            X = pd.DataFrame([[user['username'], password, 'Recruiter', email, None, None, None, None]],
+                             columns=applicant_cols)
             applicants = pd.concat([applicants, X], ignore_index=True)
             applicants.to_csv("assets/users.csv", index=False)
             return render_template_with_username('newHome.html')
@@ -151,8 +155,9 @@ def register(role, user_id):
             elif len(password) < 4:
                 output_msg = "length of password must of at least 4 characters"
             else:
-                username = user_name
-                X = pd.DataFrame([[username, password, role, email, None, None, None, None]],
+                user['username'] = user_name
+                user['role'] = role
+                X = pd.DataFrame([[user['username'], password, role, email, None, None, None, None]],
                                  columns=applicant_cols)
                 applicants = pd.concat([applicants, X], ignore_index=True)
                 applicants.to_csv("assets/users.csv", index=False)
@@ -161,104 +166,98 @@ def register(role, user_id):
 
                 return render_template_with_username('newHome.html')
 
-        return render_template('register.html', register_output=output_msg, role=role, username=username)
+        return render_template('register.html', register_output=output_msg, role=role, username=user['username'])
 
 
 @app.route("/logout", methods=['GET', 'POST'])
 def logout():
-    global username
-    username = 'Unknown'
+    global user
+    user['username'] = 'Unknown'
+    user['role'] = None
     return redirect(url_for('home'))
 
 
 @app.route("/apply/<int:user_id>", methods=['GET', 'POST'])
 def apply(user_id=None):
-    global username
+    global user
 
-    if user_id == 0:
-        return render_template_with_username('applicantDashBoard.html')
-
-    links = pd.read_csv("../assets/links_new.csv")
-    link_list = None
-
-    if request.method == "POST":
-
-        name = request.form.get('name')
-
-        # reading the pdf
-        print("starting to read!")
-        file = request.files['file']
-        cleaned_text = [cleanResume(read_pdf(file))]
-
-        WordFeatures2 = exp_vec.transform(cleaned_text)
-        # print(clf_exp.predict(WordFeatures2))
-        exp = exp_dic[clf_exp.predict(WordFeatures2)[0]]
-
-        # finding the job category
-        WordFeatures = word_vectorizer.transform(cleaned_text)
-        prediction_svc = clf_svc.predict(WordFeatures)
-        df_svc = clf_svc.decision_function(WordFeatures)
-        prediction_nb = clf_nb.predict(WordFeatures)
-        probabilities_nb = clf_nb.predict_proba(WordFeatures)
-        prediction_knn = clf_knn.predict(WordFeatures)
-        probabilities_knn = clf_knn.predict_proba(WordFeatures)
-
-        freq = {}
-        if prediction_svc[0] in freq:
-            freq[prediction_svc[0]] += 1
-        else:
-            freq[prediction_svc[0]] = 1
-        if prediction_nb[0] in freq:
-            freq[prediction_nb[0]] += 1
-        else:
-            freq[prediction_nb[0]] = 1
-        if prediction_knn[0] in freq:
-            freq[prediction_knn[0]] += 1
-        else:
-            freq[prediction_knn[0]] = 1
-        job_role1 = ''
-        f = -1
-        for i in freq:
-            if f < freq[i]:
-                job_role1 = i
-                f = freq[i]
-
-        probabilities_nb[0][int(job_role1)] = -1
-        job_role2 = f'{np.argmax(probabilities_nb)}'
-        probabilities_nb[0][int(job_role2)] = -1
-        job_role3 = f'{np.argmax(probabilities_nb)}'
-
-        print(applicants.tail())
-        # applicants.append({"name":name,"pref1":pref1,"pref2":pref2,"pref3":pref3,"workexp":workexp,"resume":X['Resume']},ignore_index = True)
-        # applicants = pd.concat([applicants,X],ignore_index = True)
-
-        # ['name', 'user_name', 'password', 'resume', 'job_category', 'work_exp']
-        applicants.loc[applicants["username"] == username,
-                       ['name', 'resume', 'job_category', 'work_exp']] = [name, cleaned_text, last[0], exp]
-        print(applicants.tail())
-        print(applicants["username"])
-        print(username)
-        applicants.to_csv("applicants.csv", index=False)
-        outputstr = last[0]
-
-        link_list = links.loc[links["Job_Title"] == outputstr]
-
-        # print(type(link_list))
-
-        link_list = link_list.values.tolist()
-        for i in range(len(link_list)):
-            for j in range(len(link_list[i])):
-                link_list[i][j] = (j, link_list[i][j])
-        # print(link_list)
-
-
+    if user['username'] == 'unknown' or user['role'] != 'applicant':
+        return redirect(url_for('home'))
     else:
-        prediction = ""
+        if user_id == 0:
+            return render_template_with_username('applicantDashBoard.html')
+        elif user_id = 1:
+            if request.method == "POST":
 
-    if user_id is not None:
-        return render_template("studentout.html", output=link_list)
+                name = request.form.get('name')
+                file = request.files['resume']
+                pdf_reader = PyPDF2.PdfReader(file)
+                num_pages = len(pdf_reader.pages)
+                text = ''
 
-    print(f'user_id is not present in url')
+                for page_num in range(num_pages):
+                    page = pdf_reader.pages[page_num]
+                    text += page.extract_text()
+
+                print(name)
+                print(text)
+
+                cleaned_text = [cleanResume(text)]
+
+                WordFeatures2 = exp_vec.transform(cleaned_text)
+                # print(clf_exp.predict(WordFeatures2))
+                exp = exp_dic[clf_exp.predict(WordFeatures2)[0]]
+
+                # finding the job category
+                WordFeatures = word_vectorizer.transform(cleaned_text)
+                prediction_svc = clf_svc.predict(WordFeatures)
+                df_svc = clf_svc.decision_function(WordFeatures)
+                prediction_nb = clf_nb.predict(WordFeatures)
+                probabilities_nb = clf_nb.predict_proba(WordFeatures)
+                prediction_knn = clf_knn.predict(WordFeatures)
+                probabilities_knn = clf_knn.predict_proba(WordFeatures)
+
+                freq = {}
+                if prediction_svc[0] in freq:
+                    freq[prediction_svc[0]] += 1
+                else:
+                    freq[prediction_svc[0]] = 1
+                if prediction_nb[0] in freq:
+                    freq[prediction_nb[0]] += 1
+                else:
+                    freq[prediction_nb[0]] = 1
+                if prediction_knn[0] in freq:
+                    freq[prediction_knn[0]] += 1
+                else:
+                    freq[prediction_knn[0]] = 1
+                job_role1 = ''
+                f = -1
+                for i in freq:
+                    if f < freq[i]:
+                        job_role1 = i
+                        f = freq[i]
+
+                probabilities_nb[0][int(job_role1)] = -1
+                job_role2 = f'{np.argmax(probabilities_nb)}'
+                probabilities_nb[0][int(job_role2)] = -1
+                job_role3 = f'{np.argmax(probabilities_nb)}'
+
+                # save the inputs in users.csv
+                applicants.loc[
+                    applicants["username"] == user['username'], ["name", "work_exp", "resume", "job_category"]] = [
+                    name, exp, text, job_role1]
+
+                print(job_role1)
+                users = applicants.loc[applicants["job_category"] == job_role1].values.tolist()
+
+                for i in range(len(users)):
+                    for j in range(len(users[i])):
+                        users[i][j] = (j, users[i][j])
+                print(users)
+
+            return render_template("applicantDashBoard.html", username=user['username'], output=users)
+        else:
+            raise Exception("Error in url, used_id can only be 0 or 1")
 
 
 @app.route("/recruit/<int:user_id>", methods=['GET', 'POST'])
@@ -348,11 +347,6 @@ def recruit(user_id=None):
 # @app.errorhandler(404)
 # def page_not_found(error):
 #     return render_template('404.html'), 404
-
-
-@app.route("/about_us", methods=['GET', 'POST'])
-def about_us():
-    return render_template('aboutUs.html')
 
 
 # Running the app
