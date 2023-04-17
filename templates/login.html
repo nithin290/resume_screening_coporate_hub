@@ -20,6 +20,8 @@
 <body>
 {{ add_navbar_with_username(username) }}
 
+<br><br><br><br><br><br>
+
 <div class="container" id="pop-up" style="width: 750px;">
     <a class="close" href="/">&times;</a>
     <form action="{{ url_for('login', role=role, user_id=1) }}" class="form" id="login" method="post">

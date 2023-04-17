@@ -22,6 +22,9 @@
 <!--    <div id="header_file" include-html="{{ url_for('static', filename = 'nav_bar/navbar1.html') }}"></div>-->
 {{ add_navbar_with_username(username) }}
 
+<br><br><br><br><br><br>
+
+
 <div class="container" id="pop-up" style="width: 750px;">
     <a class="close" href="/">&times;</a>
     <form action="{{ url_for('register', role=role, user_id=1) }}" class="form" id="createAccount" method="post">
