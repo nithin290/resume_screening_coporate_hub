@@ -45,6 +45,13 @@
             </Attribute>
           </value>
         </entry>
+        <entry key="\assets\users_without_company_name.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
       </map>
     </option>
   </component>

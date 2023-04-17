@@ -55,7 +55,6 @@ def read_pdf(file):
     num_pages = len(pdf_reader.pages)
     text = ''
 
-    print(text)
     for page_num in range(num_pages):
         page = pdf_reader.pages[page_num]
         text += page.extract_text()
@@ -185,8 +184,8 @@ def apply(user_id=None):
         return redirect(url_for('home'))
     else:
         if user_id == 0:
-            return render_template_with_username('applicantDashBoard.html')
-        elif user_id = 1:
+            return render_template('applicantDashBoard.html', username=user['username'], output=None)
+        elif user_id == 1:
             if request.method == "POST":
 
                 name = request.form.get('name')
@@ -199,13 +198,9 @@ def apply(user_id=None):
                     page = pdf_reader.pages[page_num]
                     text += page.extract_text()
 
-                print(name)
-                print(text)
-
                 cleaned_text = [cleanResume(text)]
 
                 WordFeatures2 = exp_vec.transform(cleaned_text)
-                # print(clf_exp.predict(WordFeatures2))
                 exp = exp_dic[clf_exp.predict(WordFeatures2)[0]]
 
                 # finding the job category
@@ -245,17 +240,17 @@ def apply(user_id=None):
                 # save the inputs in users.csv
                 applicants.loc[
                     applicants["username"] == user['username'], ["name", "work_exp", "resume", "job_category"]] = [
-                    name, exp, text, job_role1]
+                    name, exp, cleaned_text, job_role1]
+                applicants.to_csv("assets/users.csv", index=False)
 
-                print(job_role1)
-                users = applicants.loc[applicants["job_category"] == job_role1].values.tolist()
+                companies = pd.read_csv('assets/links_new.csv')
+                selected_companies = list(companies[companies['Job Title'] == le_name_mapping[int(job_role1)]].values)
 
-                for i in range(len(users)):
-                    for j in range(len(users[i])):
-                        users[i][j] = (j, users[i][j])
-                print(users)
+                for i in range(len(selected_companies)):
+                    for j in range(len(selected_companies[i])):
+                        selected_companies[i][j] = (j, selected_companies[i][j])
 
-            return render_template("applicantDashBoard.html", username=user['username'], output=users)
+            return render_template("applicantDashBoard.html", username=user['username'], output=selected_companies)
         else:
             raise Exception("Error in url, used_id can only be 0 or 1")
 
@@ -291,7 +286,6 @@ def recruit(user_id=None):
         if nr['Job-Role3'][person].lower() == job_avail and int(nr['Experience'][person]) >= experience:
             result += nr['Name'][person] + '\n\n'
     for person in range(len(resumeDataSet['Category'])):
-        # print(le_name_mapping[int(resumeDataSet['Category'][person])])
         if resumeDataSet['Category'][person].lower() == job_avail and \
                 resumeDataSet['EXP'][person] == req_exp:
             result += f'resume index : {person + 2}' + '\n\n'

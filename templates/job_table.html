@@ -1,0 +1,30 @@
+{% macro add_jobs_table(output) %}
+{% if output != None %}
+<table class="table">
+    <thead class="thead-dark">
+    <tr>
+        <th> sr.no</th>
+        <th> Job_Title</th>
+        <th> Company_Job_Title</th>
+        <th> Company_Link</th>
+        <th> Company_Name</th>
+        <th> Company_Location</th>
+    </tr>
+    <thead>
+    {%for row in output%}
+    <tr>
+        {%for i,col in row%}
+
+        {%if i != 3%}
+        <td> {{col}}</td>
+        {%else%}
+        <td><a href={{col}} rel="noopener noreferrer" target="_blank">link</a></td>
+        {%endif%}
+        {%endfor%}
+    </tr>
+
+    {%endfor%}
+
+</table>
+{% endif %}
+{% endmacro %}
