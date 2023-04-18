@@ -1,23 +1,31 @@
 import pickle
 import re
-import warnings
+from logging import FileHandler, WARNING
 
-import PyPDF2
 import numpy as np
 import pandas as pd
+from PyPDF2 import PdfReader as pdf_reader, errors
 from flask import Flask, request, render_template, redirect, url_for
 
-warnings.filterwarnings("ignore", category=DeprecationWarning)
-warnings.filterwarnings("ignore", category=UserWarning)
+# warnings.filterwarnings("ignore", category=DeprecationWarning)
+# warnings.filterwarnings("ignore", category=UserWarning)
 
 app = Flask(__name__)
 app.config['UPLOAD_FOLDER'] = 'uploads'
+file_handler = FileHandler('error_log.txt')
+file_handler.setLevel(WARNING)
 
 # global variables
 user = {'username': 'Unknown', 'role': None}
 
-applicants = None
 applicant_cols = ['username', 'password', 'role', 'email', 'name', 'resume', 'job_category', 'work_exp']
+
+# applicants = None
+try:
+    applicants = pd.read_csv("assets/users.csv", header=0, index_col=False)
+except pd.errors.EmptyDataError as e:
+    print(e)
+    applicants = pd.DataFrame(columns=applicant_cols)
 
 # maps
 exp_dic = {0: 'Early career (2-5 yr)', 1: 'Mid-level (5-10 yr)', 2: 'Senior (+10 yr, not executive)'}
@@ -52,12 +60,12 @@ def render_template_with_username(*parameters):
 
 
 def read_pdf(file):
-    pdf_reader = PyPDF2.PdfReader(file)
-    num_pages = len(pdf_reader.pages)
+    pdf = pdf_reader(file)
+    num_pages = len(pdf.pages)
     text = ''
 
     for page_num in range(num_pages):
-        page = pdf_reader.pages[page_num]
+        page = pdf.pages[page_num]
         text += page.extract_text()
 
     text = text.replace('\n', ' ')
@@ -66,20 +74,20 @@ def read_pdf(file):
 
 
 def cleanResume(resumeText):
-    resumeText = re.sub('http\S+\s*', ' ', resumeText)  # remove URLs
+    resumeText = re.sub(r'http\S+\s*', ' ', resumeText)  # remove URLs
     resumeText = re.sub('RT|cc', ' ', resumeText)  # remove RT and cc
-    resumeText = re.sub('#\S+', ' ', resumeText)  # remove hashtags
-    resumeText = re.sub('@\S+', ' ', resumeText)  # remove mentions
-    resumeText = re.sub('[%s]' % re.escape("""!"#$%&'()*+,-./:;<=>?@[\]^_`{|}~"""), ' ',
+    resumeText = re.sub(r'#\S+', ' ', resumeText)  # remove hashtags
+    resumeText = re.sub(r'@\S+', ' ', resumeText)  # remove mentions
+    resumeText = re.sub('[%s]' % re.escape(r"""!"#$%&'()*+,-./:;<=>?@[\]^_`{|}~"""), ' ',
                         resumeText)  # remove punctuations
     resumeText = re.sub(r'[^\x00-\x7f]', r' ', resumeText)
-    resumeText = re.sub('\s+', ' ', resumeText)  # remove extra whitespace
+    resumeText = re.sub(r'\s+', ' ', resumeText)  # remove extra whitespace
     return resumeText
 
 
 @app.route("/", methods=['GET', 'POST'])
 def home():
-    return render_template_with_username("newHome.html")
+    return render_template_with_username("home.html")
 
 
 @app.route("/login/<string:role>", methods=['GET', 'POST'])
@@ -115,7 +123,7 @@ def login(role, user_id):
         if output_msg is not None:
             return render_template("login.html", login_output=output_msg, role=role, username=user['username'])
         else:
-            return render_template_with_username("newHome.html")
+            return render_template_with_username("home.html")
 
 
 @app.route("/register/<string:role>", methods=['GET', 'POST'])
@@ -133,13 +141,10 @@ def register(role, user_id):
         user_name = request.form.get("username")
 
         usernames = None
-        passwords = None
-
         output_msg = None
 
         if not applicants.empty:
             usernames = applicants["username"].values.tolist()
-            passwords = applicants["password"].values.tolist()
 
         if usernames is None:
             user['username'] = user_name
@@ -148,7 +153,7 @@ def register(role, user_id):
                              columns=applicant_cols)
             applicants = pd.concat([applicants, X], ignore_index=True)
             applicants.to_csv("assets/users.csv", index=False)
-            return render_template_with_username('newHome.html')
+            return render_template_with_username('home.html')
         else:
             if user_name in usernames:
                 output_msg = "username is already taken"
@@ -164,7 +169,7 @@ def register(role, user_id):
 
                 output_msg = "account created successfully"
 
-                return render_template_with_username('newHome.html')
+                return render_template_with_username('home.html')
 
         return render_template('register.html', register_output=output_msg, role=role, username=user['username'])
 
@@ -179,7 +184,7 @@ def logout():
 
 @app.route("/apply", methods=['GET', 'POST'])
 @app.route("/apply/<int:user_id>", methods=['GET', 'POST'])
-def apply(user_id=None):
+def apply(user_id):
     global user
 
     if user['username'] == 'unknown' or user['role'] != 'applicant':
@@ -192,12 +197,18 @@ def apply(user_id=None):
 
                 name = request.form.get('name')
                 file = request.files['resume']
-                pdf_reader = PyPDF2.PdfReader(file)
-                num_pages = len(pdf_reader.pages)
+
+                try:
+                    pdf = pdf_reader(file)
+                except errors.EmptyFileError as e:
+                    print(e)
+                    return redirect(url_for('apply', user_id=0))
+
+                num_pages = len(pdf.pages)
                 text = ''
 
                 for page_num in range(num_pages):
-                    page = pdf_reader.pages[page_num]
+                    page = pdf.pages[page_num]
                     text += page.extract_text()
 
                 cleaned_text = [cleanResume(text)]
@@ -240,29 +251,29 @@ def apply(user_id=None):
                 job_role3 = f'{np.argmax(probabilities_nb)}'
 
                 # save the inputs in users.csv
-                applicants.loc[
-                    applicants["username"] == user['username'], ["name", "work_exp", "resume", "job_category"]] = [
-                    name, exp, cleaned_text, job_role1]
+                applicants.loc[applicants["username"] == user['username'],
+                               ["name", "work_exp", "resume", "job_category"]] = [name, exp, cleaned_text[0], job_role1]
                 applicants.to_csv("assets/users.csv", index=False)
 
                 companies = pd.read_csv('assets/links_new.csv')
                 selected_companies = list(companies[companies['Job Title'] == le_name_mapping[int(job_role1)]][
                                               ["Company Name", "Company Location", "Company Job Title",
                                                "Company Link"]].values)
-                print(selected_companies)
+
+                print(applicants)
 
                 for i in range(len(selected_companies)):
                     for j in range(len(selected_companies[i])):
                         selected_companies[i][j] = (j, selected_companies[i][j])
 
-            return render_template("applicantDashBoard.html", username=user['username'], output=selected_companies)
+                return render_template("applicantDashBoard.html", username=user['username'], output=selected_companies)
         else:
             raise Exception("Error in url, used_id can only be 0 or 1")
 
 
 @app.route("/recruit/", methods=['GET', 'POST'])
 @app.route("/recruit/<int:user_id>", methods=['GET', 'POST'])
-def recruit(user_id=None):
+def recruit(user_id):
     global user
 
     if user['username'] == 'unknown' or user['role'] != 'recruiter':
@@ -276,16 +287,6 @@ def recruit(user_id=None):
                 job_role = float(request.form.get('job role')) - 1
                 exp = int(request.form.get('work_exp'))
 
-                # nr = pd.read_csv('assets/newResumes.csv', encoding='utf-8')
-                # job_avail = request.form['job role'].lower()
-                # experience = int(request.form['work exp'])
-                # result = ''
-                # jd = request.form['job description'].lower()
-                # jd = cleanResume(jd)
-                # WordFeatures2 = jd_vec.transform([jd])
-                # predicted_job_role = job_desc[clf_jd.predict(WordFeatures2)[0]]
-                # resumeDataSet = pd.read_csv('assets/Resume_With_Experience.csv', encoding='utf-8')
-
                 req_exp = ''
                 if exp < 5:
                     req_exp = 'Early career (2-5 yr)'
@@ -293,20 +294,6 @@ def recruit(user_id=None):
                     req_exp = 'Mid-level (5-10 yr)'
                 else:
                     req_exp = 'Senior (+10 yr, not executive)'
-
-                # for person in range(len(nr['Name'])):
-                #     if nr['Job-Role1'][person].lower() == job_avail and nr['Experience'][person] == req_exp:
-                #         result += nr['Name'][person] + '\n\n'
-                # for person in range(len(nr['Name'])):
-                #     if nr['Job-Role2'][person].lower() == job_avail and nr['Experience'][person] == req_exp:
-                #         result += nr['Name'][person] + '\n\n'
-                # for person in range(len(nr['Name'])):
-                #     if nr['Job-Role3'][person].lower() == job_avail and nr['Experience'][person] == req_exp:
-                #         result += nr['Name'][person] + '\n\n'
-                # for person in range(len(resumeDataSet['Category'])):
-                #     if resumeDataSet['Category'][person].lower() == job_avail and \
-                #             resumeDataSet['EXP'][person] == req_exp:
-                #         result += f'resume index : {person + 2}' + '\n\n'
 
                 print(job_role)
                 print(applicants['job_category'])
@@ -318,7 +305,6 @@ def recruit(user_id=None):
                 for i in range(len(selected_applicants)):
                     for j in range(len(selected_applicants[i])):
                         selected_applicants[i][j] = (j, selected_applicants[i][j])
-                print(selected_applicants)
 
             # if names is None:
             #     names = "No applicant has been found"
@@ -331,12 +317,5 @@ def recruit(user_id=None):
 
 
 # Running the app
-if __name__ == '__main__':
-
-    try:
-        applicants = pd.read_csv("assets/users.csv", header=0, index_col=False)
-    except pd.errors.EmptyDataError as e:
-        print(e)
-        applicants = pd.DataFrame(columns=applicant_cols)
-
-    app.run(host='0.0.0.0', port='5000', debug=True)
+if __name__ == "__main__":
+    app.run(debug=True)

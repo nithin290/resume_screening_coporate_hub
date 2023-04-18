@@ -1,14 +1,14 @@
 import os
+import pickle
+import re
 import urllib
+from csv import DictWriter
 
+import PyPDF2
 import numpy as np
 import pandas as pd
 from flask import Flask, request, render_template
-import pickle
 from werkzeug.utils import secure_filename
-import re
-import PyPDF2
-from csv import DictWriter
 
 le_name_mapping = {0: 'Advocate', 1: 'Arts', 2: 'Automation Testing', 3: 'Blockchain', 4: 'Business Analyst',
                    5: 'Civil Engineer', 6: 'Data Science', 7: 'Database', 8: 'DevOps Engineer',
@@ -63,6 +63,7 @@ clf_exp = pickle.load(open('models/svc2.pkl', 'rb'))
 exp_vec = pickle.load(open('models/vectorizer2.pkl', 'rb'))
 clf_jd = pickle.load(open('models/svc3.pkl', 'rb'))
 jd_vec = pickle.load(open('models/vectorizer3.pkl', 'rb'))
+
 
 @app.route('/')
 def home():
